@@ -96,6 +96,6 @@ public abstract class PuzzleOutputStream<P> extends OutputStream {
 	 * @return The deserialized puzzle object
 	 * @throws PuzzleDeserializationException An error occurred during deserialization
 	 */
-	public abstract P toPuzzle() throws PuzzleDeserializationException;
+	public abstract P toPuzzle() throws IOException;
 
 }

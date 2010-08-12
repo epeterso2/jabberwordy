@@ -26,7 +26,6 @@ package com.epeterso2.jabberwordy.serialization.puz;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.epeterso2.jabberwordy.serialization.PuzzleDeserializationException;
 import com.epeterso2.jabberwordy.serialization.PuzzleOutputStream;
 import com.epeterso2.jabberwordy.util.Coordinate;
 
@@ -100,7 +99,7 @@ public class PUZPuzzleOutputStream extends PuzzleOutputStream<PUZPuzzle> {
 	 * @throws PuzzleDeserializationException An inconsistency in the PUZ image was detected that prevents successful deserialization.
 	 */
 	@Override
-	public PUZPuzzle toPuzzle() throws PuzzleDeserializationException
+	public PUZPuzzle toPuzzle() throws IOException
 	{
 		// Build a new context from the data in this output stream
 		PUZContext context = new PUZContext( toByteArray() );
@@ -108,7 +107,7 @@ public class PUZPuzzleOutputStream extends PuzzleOutputStream<PUZPuzzle> {
 		// Validate the image if we're not lenient
 		if ( ! isLenient() && ! context.isValidImage() )
 		{
-			throw new PuzzleDeserializationException();
+			throw new IOException();
 		}
 		
 		// Build a new puzzle object
@@ -167,7 +166,7 @@ public class PUZPuzzleOutputStream extends PuzzleOutputStream<PUZPuzzle> {
 
 		catch ( Exception e )
 		{
-			throw new PuzzleDeserializationException( e );
+			throw new IOException( e );
 		}
 
 		return puzzle;
