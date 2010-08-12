@@ -23,8 +23,9 @@
 
 package com.epeterso2.jabberwordy.serialization.json;
 
+import java.io.IOException;
+
 import com.epeterso2.jabberwordy.serialization.PuzzleInputStream;
-import com.epeterso2.jabberwordy.serialization.PuzzleSerializationException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -33,7 +34,7 @@ public class JSONPuzzleInputStream extends PuzzleInputStream<JSONPuzzle> {
 	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
 	@Override
-	public byte[] toByteArray() throws PuzzleSerializationException
+	public byte[] toByteArray() throws IOException
 	{
 		return gson.toJson( getPuzzle() ).getBytes();
 	}

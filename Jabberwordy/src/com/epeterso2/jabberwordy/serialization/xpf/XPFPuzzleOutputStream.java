@@ -25,32 +25,26 @@ package com.epeterso2.jabberwordy.serialization.xpf;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import com.epeterso2.jabberwordy.serialization.PuzzleDeserializationException;
 import com.epeterso2.jabberwordy.serialization.PuzzleOutputStream;
 
 public class XPFPuzzleOutputStream extends PuzzleOutputStream<Document> {
 
 	@Override
-	public Document toPuzzle() throws PuzzleDeserializationException
+	public Document toPuzzle() throws IOException
 	{
-		try {
+		try
+		{
 			return new SAXBuilder().build( new ByteArrayInputStream( toByteArray() ) );
 		}
 		
 		catch ( JDOMException e )
 		{
-			throw new PuzzleDeserializationException( e );
-		}
-		
-		catch ( IOException e )
-		{
-			throw new PuzzleDeserializationException( e );
+			throw new IOException( e );
 		}
 	}
 

@@ -105,8 +105,8 @@ public abstract class PuzzleInputStream<P> extends InputStream {
 	/**
 	 * Serializes the puzzle associated with this class.
 	 * @return A serialized byte-array representation of the puzzle 
-	 * @throws PuzzleSerializationException if an error occurs during the serialization process
+	 * @throws IOException if an error occurs during the serialization process
 	 */
-	public abstract byte[] toByteArray() throws PuzzleSerializationException;
+	public abstract byte[] toByteArray() throws IOException;
 	
 }

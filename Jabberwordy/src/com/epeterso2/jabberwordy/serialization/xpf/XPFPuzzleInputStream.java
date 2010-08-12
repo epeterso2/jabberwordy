@@ -23,16 +23,17 @@
 
 package com.epeterso2.jabberwordy.serialization.xpf;
 
+import java.io.IOException;
+
 import org.jdom.Document;
 import org.jdom.output.XMLOutputter;
 
 import com.epeterso2.jabberwordy.serialization.PuzzleInputStream;
-import com.epeterso2.jabberwordy.serialization.PuzzleSerializationException;
 
 public class XPFPuzzleInputStream extends PuzzleInputStream<Document> {
 
 	@Override
-	public byte[] toByteArray() throws PuzzleSerializationException
+	public byte[] toByteArray() throws IOException
 	{
 		return new XMLOutputter().outputString( getPuzzle() ).getBytes();
 	}

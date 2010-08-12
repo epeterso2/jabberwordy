@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.epeterso2.jabberwordy.serialization.PuzzleInputStream;
-import com.epeterso2.jabberwordy.serialization.PuzzleSerializationException;
 import com.epeterso2.jabberwordy.util.Coordinate;
 import com.epeterso2.jabberwordy.util.CoordinateMap;
 
@@ -53,11 +52,11 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 	 * @return The byte[] of the serialized puzzle
 	 * @throws PuzzleSerializationException An error occurred during serialization or the puzzle object contains inconsistencies that would preclude serialization
 	 */
-	public byte[] toByteArray() throws PuzzleSerializationException
+	public byte[] toByteArray() throws IOException
 	{
 		// Ensure the puzzle is ready to be serialized
 		validate();
-		
+
 		PUZPuzzle puzzle = getPuzzle();
 
 		/**
@@ -67,113 +66,96 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 		 */
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-		// Overall checksum
-		try {
-			// Overall file checksum
-			out.write( new byte[ 2 ] );
+		// Overall file checksum
+		out.write( new byte[ 2 ] );
 
-			// File magic
-			out.write( PUZUtil.FILE_MAGIC.getBytes() );
+		// File magic
+		out.write( PUZUtil.FILE_MAGIC.getBytes() );
 
-			// CIB checksum
-			out.write( new byte[ 2 ] );
+		// CIB checksum
+		out.write( new byte[ 2 ] );
 
-			// Masked checksums
-			out.write( new byte[ 4 ] );
-			out.write( new byte[ 4 ] );
+		// Masked checksums
+		out.write( new byte[ 4 ] );
+		out.write( new byte[ 4 ] );
 
-			// Version string
-			out.write( VERSION_STRING.getBytes() );
+		// Version string
+		out.write( VERSION_STRING.getBytes() );
 
-			// Reserved 1C
-			out.write( new byte[ 2 ] );
+		// Reserved 1C
+		out.write( new byte[ 2 ] );
 
-			// Scrambled checksum
-			out.write( PUZUtil.intToUshortBytes( computeScrambledChecksum( puzzle ) ) );
+		// Scrambled checksum
+		out.write( PUZUtil.intToUshortBytes( computeScrambledChecksum( puzzle ) ) );
 
-			// Reserved 20
-			out.write( new byte[ 0xC ] );
+		// Reserved 20
+		out.write( new byte[ 0xC ] );
 
-			// Width and height
-			out.write( (byte) puzzle.getWidth() );
-			out.write( (byte) puzzle.getHeight() );
+		// Width and height
+		out.write( (byte) puzzle.getWidth() );
+		out.write( (byte) puzzle.getHeight() );
 
-			// Number of clues
-			out.write( PUZUtil.intToUshortBytes( puzzle.getAcrossClues().size() + puzzle.getDownClues().size() ) );
+		// Number of clues
+		out.write( PUZUtil.intToUshortBytes( puzzle.getAcrossClues().size() + puzzle.getDownClues().size() ) );
 
-			// Puzzle type
-			out.write( buildPuzzleType( puzzle ) );
+		// Puzzle type
+		out.write( buildPuzzleType( puzzle ) );
 
-			// Scrambled status
-			out.write( buildSolutionType( puzzle ) );
+		// Scrambled status
+		out.write( buildSolutionType( puzzle ) );
 
-			// The solution
-			out.write( buildSolution( puzzle ) );
+		// The solution
+		out.write( buildSolution( puzzle ) );
 
-			// The player state
-			out.write( buildPlayerState( puzzle ) );
+		// The player state
+		out.write( buildPlayerState( puzzle ) );
 
-			// Title
-			out.write( ( puzzle.getTitle() == null ? "" : puzzle.getTitle() ).getBytes() );
-			out.write( 0 );
+		// Title
+		out.write( ( puzzle.getTitle() == null ? "" : puzzle.getTitle() ).getBytes() );
+		out.write( 0 );
 
-			// Author
-			out.write( ( puzzle.getAuthor() == null ? "" : puzzle.getAuthor() ).getBytes() );
-			out.write( 0 );
+		// Author
+		out.write( ( puzzle.getAuthor() == null ? "" : puzzle.getAuthor() ).getBytes() );
+		out.write( 0 );
 
-			// Copyright
-			out.write( ( puzzle.getCopyright() == null ? "" : puzzle.getCopyright() ).getBytes() );
-			out.write( 0 );
+		// Copyright
+		out.write( ( puzzle.getCopyright() == null ? "" : puzzle.getCopyright() ).getBytes() );
+		out.write( 0 );
 
-			// Clues
-			out.write( buildClues( puzzle ) );
+		// Clues
+		out.write( buildClues( puzzle ) );
 
-			// Notes
-			out.write( ( puzzle.getNotes() == null ? "" : puzzle.getNotes() ).getBytes() );
-			out.write( 0 );
+		// Notes
+		out.write( ( puzzle.getNotes() == null ? "" : puzzle.getNotes() ).getBytes() );
+		out.write( 0 );
 
-			// Extra sections
-			out.write( buildGRBSandRTBLSection( puzzle ) );
-			out.write( buildLTIMSection( puzzle ) );
-			out.write( buildGEXTSection( puzzle ) );
-			out.write( buildRUSRSection( puzzle ) );
+		// Extra sections
+		out.write( buildGRBSandRTBLSection( puzzle ) );
+		out.write( buildLTIMSection( puzzle ) );
+		out.write( buildGEXTSection( puzzle ) );
+		out.write( buildRUSRSection( puzzle ) );
 
-			// Get the image
-			byte[] image = out.toByteArray();
+		// Get the image
+		byte[] image = out.toByteArray();
 
-			// Scramble the solution
-			if ( puzzle.isSolutionEncrypted() )
-			{
-				PUZUtil.lockSolution( image, puzzle.getUnlockCode() );
-			}
-
-			// Add checksums
-			addChecksums( image );
-
-			// Validate the image
-			if ( PUZUtil.isValidImage( image ) )
-			{
-				return image;
-			}
-
-			else
-			{
-				throw new PuzzleSerializationException();
-			}
+		// Scramble the solution
+		if ( puzzle.isSolutionEncrypted() )
+		{
+			PUZUtil.lockSolution( image, puzzle.getUnlockCode() );
 		}
 
-		catch ( Exception e )
+		// Add checksums
+		addChecksums( image );
+
+		// Validate the image
+		if ( PUZUtil.isValidImage( image ) )
 		{
-			throw new PuzzleSerializationException( e );
+			return image;
 		}
 
-		finally
+		else
 		{
-			try {
-				out.close();
-			} catch ( IOException e ) {
-				throw new PuzzleSerializationException( e );
-			}
+			throw new IOException();
 		}
 	}
 
@@ -509,10 +491,10 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 	 * Analyzes the {@link PUZPuzzle} object associated with this output stream to determine if it can be serialized successfully or not.
 	 * @throws PuzzleSerializationException if the puzzle cannot be serialized
 	 */
-	public void validate() throws PuzzleSerializationException
+	public void validate() throws IOException
 	{
 		PUZPuzzle puzzle = getPuzzle();
-		
+
 		// Dimensions
 		confirm( puzzle.getWidth() > 0, "Width must be greater than zero" );
 		confirm( puzzle.getHeight() > 0, "Height must be greater than zero" );
@@ -535,7 +517,7 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 		}
 	}
 
-	private void confirmClues( PUZPuzzle puzzle ) throws PuzzleSerializationException
+	private void confirmClues( PUZPuzzle puzzle ) throws IOException
 	{
 		ArrayList<String> clues = new ArrayList<String>();
 		PUZPuzzle test = new PUZPuzzle( puzzle.getWidth(), puzzle.getHeight() );
@@ -586,13 +568,13 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 		}
 	}
 
-	private void confirmUnlockCode( PUZPuzzle puzzle ) throws PuzzleSerializationException
+	private void confirmUnlockCode( PUZPuzzle puzzle ) throws IOException
 	{
 		confirm( puzzle.getUnlockCode() != null, "Unlock code cannot be null if solution is scrambled" );
 		confirm( puzzle.getUnlockCode().matches( "^[1-9]{4}$" ), "Unlock code must be a string of 4 digits in the range 1 to 9" );
 	}
 
-	private void confirmSolution( PUZPuzzle puzzle ) throws PuzzleSerializationException
+	private void confirmSolution( PUZPuzzle puzzle ) throws IOException
 	{
 		for ( Coordinate coord : puzzle.getCoordinates() )
 		{
@@ -603,7 +585,7 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 		}
 	}
 
-	private void confirmCellNumbering( PUZPuzzle puzzle ) throws PuzzleSerializationException
+	private void confirmCellNumbering( PUZPuzzle puzzle ) throws IOException
 	{
 		PUZPuzzle test = new PUZPuzzle( puzzle.getWidth(), puzzle.getHeight() );
 
@@ -621,11 +603,11 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 		}
 	}
 
-	private void confirm( boolean b, String string ) throws PuzzleSerializationException
+	private void confirm( boolean b, String string ) throws IOException
 	{
 		if ( ! b )
 		{
-			throw new PuzzleSerializationException( string );
+			throw new IOException( string );
 		}
 	}
 
