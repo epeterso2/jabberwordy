@@ -435,7 +435,7 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 
 			if ( ! puzzle.getCellStyles().get( coord ).isBlock() )
 			{
-				value = (byte) puzzle.getSolutions().get( coord ).getLetter();
+				value = (byte) puzzle.getSolutions().get( coord ).getSingleLetter();
 			}
 
 			gridImage[ getGridOffset( puzzle, coord ) ] = value;
