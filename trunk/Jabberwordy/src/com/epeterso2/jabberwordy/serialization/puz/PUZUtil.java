@@ -1003,13 +1003,14 @@ public abstract class PUZUtil {
 	 * @param row The row (starting at 0) of the desired cell
 	 * @return The value of the solution for the desired cell
 	 */
-	public static String getSolution( byte[] image, int col, int row )
+	public static PUZSolution getSolution( byte[] image, int col, int row )
 	{
-		String solution = "";
+		PUZSolution solution = new PUZSolution();
 
 		if ( ! isBlock( image, col, row ) )
 		{
-			solution = Character.toString( (char) getSolutionCell( image, col, row ) );
+			solution.setLetter( (char) getSolutionCell( image, col, row ) );
+			
 			PUZExtraSection grbs = getExtraSection( image, GRBS_SECTION_NAME );
 			PUZExtraSection rtbl = getExtraSection( image, RTBL_SECTION_NAME );
 
@@ -1019,7 +1020,7 @@ public abstract class PUZUtil {
 
 				if ( grbsIndex != 0 )
 				{
-					solution = getRTBLValue( rtbl, grbsIndex - 1 );
+					solution.setRebus( getRTBLValue( rtbl, grbsIndex - 1 ) );
 				}
 			}
 		}

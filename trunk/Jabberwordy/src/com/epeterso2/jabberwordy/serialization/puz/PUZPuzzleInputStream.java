@@ -189,9 +189,9 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 
 		for ( Coordinate coord : puzzle.getCoordinates() )
 		{
-			String solution = puzzle.getSolutions().get( coord );
+			String solution = puzzle.getSolutions().get( coord ).getRebus();
 
-			if ( solution.length() > 1 )
+			if ( solution != null && solution.length() > 0 )
 			{
 				if ( ! rtblMap.containsKey( solution ) )
 				{
@@ -409,7 +409,7 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 
 					if ( ! puzzle.getCellStyles().get( coord ).isBlock() )
 					{
-						builder.append( puzzle.getSolutions().get( coord ).charAt( 0 ) );
+						builder.append( puzzle.getSolutions().get( coord ).getLetter() );
 					}
 				}
 			}
@@ -427,15 +427,24 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 
 	private byte[] buildSolution( PUZPuzzle puzzle )
 	{
-		return buildGrid( puzzle, puzzle.getSolutions() );
+		byte[] gridImage = new byte[ puzzle.getNumberOfCells() ];
+
+		for ( Coordinate coord : puzzle.getCoordinates() )
+		{
+			byte value = '.';
+
+			if ( ! puzzle.getCellStyles().get( coord ).isBlock() )
+			{
+				value = (byte) puzzle.getSolutions().get( coord ).getLetter();
+			}
+
+			gridImage[ getGridOffset( puzzle, coord ) ] = value;
+		}
+
+		return gridImage;
 	}
 
 	private byte[] buildPlayerState( PUZPuzzle puzzle )
-	{
-		return buildGrid( puzzle, puzzle.getPlayerState() );
-	}
-
-	private byte[] buildGrid( PUZPuzzle puzzle, CoordinateMap<String> values )
 	{
 		byte[] gridImage = new byte[ puzzle.getNumberOfCells() ];
 
@@ -445,7 +454,7 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 
 			if ( ! puzzle.getCellStyles().get( coord ).isBlock() )
 			{
-				String sol = values.get( coord );
+				String sol = puzzle.getPlayerState().get( coord );
 				value = (byte) ( sol.length() == 0 ? '-' : sol.charAt( 0 ) );
 			}
 
@@ -580,7 +589,7 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 		{
 			if ( ! puzzle.getCellStyles().get( coord ).isBlock() )
 			{
-				confirm( puzzle.getSolutions().get( coord ).length() > 0, "Solution length cannot be zero at " + coord );
+				confirm( puzzle.getSolutions().get( coord ).getLetter() >= 'A' && puzzle.getSolutions().get( coord ).getLetter() <= 'Z', "Solution at " + coord + " is not a letter" );
 			}
 		}
 	}

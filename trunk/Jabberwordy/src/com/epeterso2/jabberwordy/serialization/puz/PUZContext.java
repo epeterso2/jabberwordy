@@ -226,7 +226,7 @@ public class PUZContext {
 	 * @param row The row (starting at 0) of the desired cell
 	 * @return The value of the solution cell
 	 */
-	public String getSolution( int col, int row )
+	public PUZSolution getSolution( int col, int row )
 	{
 		return PUZUtil.getSolution( image, col, row );
 	}
