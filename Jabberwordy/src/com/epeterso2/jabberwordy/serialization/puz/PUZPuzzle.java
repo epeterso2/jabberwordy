@@ -62,7 +62,7 @@ public class PUZPuzzle implements Cloneable {
 	
 	private boolean diagramless = false;
 	
-	private CoordinateMap<String> solutions = new CoordinateMap<String>();
+	private CoordinateMap<PUZSolution> solutions = new CoordinateMap<PUZSolution>();
 	
 	private CoordinateMap<String> playerState = new CoordinateMap<String>();
 	
@@ -96,7 +96,7 @@ public class PUZPuzzle implements Cloneable {
 		
 		for ( Coordinate coordinate : new GridCoordinateSet( width, height ) )
 		{
-			getSolutions().put( coordinate, "" );
+			getSolutions().put( coordinate, new PUZSolution() );
 			getPlayerState().put( coordinate, "" );
 			getCellStyles().put( coordinate, new PUZCellStyle() );
 		}
@@ -150,7 +150,7 @@ public class PUZPuzzle implements Cloneable {
 	 * Returns the mapping of coordinates into solution strings  
 	 * @return The solution {@link CoordinateMap}
 	 */
-	public CoordinateMap<String> getSolutions() {
+	public CoordinateMap<PUZSolution> getSolutions() {
 		return solutions;
 	}
 
