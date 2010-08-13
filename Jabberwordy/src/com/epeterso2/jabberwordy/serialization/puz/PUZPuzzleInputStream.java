@@ -589,7 +589,7 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 		{
 			if ( ! puzzle.getCellStyles().get( coord ).isBlock() )
 			{
-				confirm( puzzle.getSolutions().get( coord ).getLetter() >= 'A' && puzzle.getSolutions().get( coord ).getLetter() <= 'Z', "Solution at " + coord + " is not a letter" );
+				confirm( puzzle.getSolutions().get( coord ).getSingleLetter() >= 'A' && puzzle.getSolutions().get( coord ).getSingleLetter() <= 'Z', "Solution at " + coord + " is not a letter" );
 			}
 		}
 	}
