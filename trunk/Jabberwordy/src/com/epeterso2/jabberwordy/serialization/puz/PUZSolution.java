@@ -59,5 +59,10 @@ public class PUZSolution {
 		
 		return single;
 	}
+	
+	public String toString()
+	{
+		return new StringBuilder().append( "(" ).append( letter ).append( "," ).append( rebus ).append( ")" ).toString();
+	}
 
 }
