@@ -23,8 +23,9 @@
 
 package com.epeterso2.jabberwordy.serialization.xpf;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.epeterso2.jabberwordy.util.Coordinate;
@@ -63,7 +64,7 @@ public class XPFPuzzle {
 	
 	private CoordinateMap<String> playerState = new CoordinateMap<String>();
 	
-	private Set<XPFClue> clues = new HashSet<XPFClue>();
+	private List<XPFClue> clues = new ArrayList<XPFClue>();
 	
 	public XPFPuzzle( int cols, int rows )
 	{
@@ -162,11 +163,11 @@ public class XPFPuzzle {
 		return playerState;
 	}
 
-	public void setClues(Set<XPFClue> clues) {
+	public void setClues(List<XPFClue> clues) {
 		this.clues = clues;
 	}
 
-	public Set<XPFClue> getClues() {
+	public List<XPFClue> getClues() {
 		return clues;
 	}
 

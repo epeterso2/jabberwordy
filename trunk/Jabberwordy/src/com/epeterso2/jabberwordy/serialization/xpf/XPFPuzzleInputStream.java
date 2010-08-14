@@ -26,8 +26,8 @@ package com.epeterso2.jabberwordy.serialization.xpf;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jdom.CDATA;
 import org.jdom.Content;
@@ -82,7 +82,7 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 	{
 		// Make sure we're ready to serialize
 		validate();
-		
+
 		// Write the output
 		return new XMLOutputter( ( isCompact() ? Format.getCompactFormat() : Format.getPrettyFormat() ).setEncoding( encoding ) ).outputString( buildDocument( getPuzzle() ) ).getBytes();
 	}
@@ -145,7 +145,7 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 
 		if ( puzzle.getClues() != null )
 		{
-			Set<XPFClue> clues = allCluesAreLocated( puzzle ) ? puzzle.getClues() : locateClues( puzzle );
+			List<XPFClue> clues = allCluesAreLocated( puzzle ) ? puzzle.getClues() : locateClues( puzzle );
 
 			for ( XPFClue clue : clues )
 			{
@@ -153,7 +153,7 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 				{
 					cluesElement = new Element( "Clues" );
 				}
-				
+
 				Element clueElement = new Element( "Clue" );
 				clueElement.setAttribute( "Row", Integer.valueOf( clue.getCoordinate().getY() ).toString() );
 				clueElement.setAttribute( "Col", Integer.valueOf( clue.getCoordinate().getX() ).toString() );
@@ -161,7 +161,7 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 				clueElement.setAttribute( "Dir", clue.getDirection() );
 				clueElement.setAttribute( "Ans", clue.getAnswer() );
 				clueElement.setText( clue.getText() );
-				
+
 				cluesElement.addContent( clueElement );
 			}
 		}
@@ -169,13 +169,107 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 		return cluesElement;
 	}
 
-	private Set<XPFClue> locateClues( XPFPuzzle puzzle )
-	{
-		Set<XPFClue> clues = new HashSet<XPFClue>();
-		
-		// TODO
+	private static XPFCellStyle blockCellStyle = new XPFCellStyle();
 
-		return clues;
+	static
+	{
+		blockCellStyle.setBlock( true );
+	}
+
+	private XPFCellStyle getStyle( XPFPuzzle puzzle, int x, int y )
+	{
+		return puzzle.getCellStyles().containsKey( x, y ) ? puzzle.getCellStyles().get( x, y ) : blockCellStyle;
+	}
+
+	private List<XPFClue> locateClues( XPFPuzzle puzzle )
+	{
+		// Make a copy that we can destroy
+		List<XPFClue> clues = new ArrayList<XPFClue>();
+		clues.addAll( puzzle.getClues() );
+
+		List<XPFClue> locatedClues = new ArrayList<XPFClue>();
+		int clueNumber = 0;
+
+		for ( Coordinate coord : puzzle.getCoordinates() )
+		{
+			boolean acrossEntry = false;
+			boolean downEntry = false;
+
+			// If the cell is not a block, see if it needs to be numbered
+			if ( ! puzzle.getCellStyles().get( coord ).isBlock() )
+			{
+				// Grab the other cells in the vicinity, including virtual ones that might be off the grid
+				XPFCellStyle styleUp = getStyle( puzzle, coord.getX(), coord.getY() - 1 );
+				XPFCellStyle styleDown  = getStyle( puzzle, coord.getX(), coord.getY() + 1 );
+				XPFCellStyle styleLeft = getStyle( puzzle, coord.getX() - 1, coord.getY() );
+				XPFCellStyle styleRight = getStyle( puzzle, coord.getX() + 1, coord.getY() );
+
+				// Compute the number of enterable directions
+				int playDirs = 0;
+				playDirs += styleUp.isBlock()    ? 0 : 1;
+				playDirs += styleDown.isBlock()  ? 0 : 1;
+				playDirs += styleLeft.isBlock()  ? 0 : 1;
+				playDirs += styleRight.isBlock() ? 0 : 1;
+
+				// Can this be the start of an across entry?
+				if ( styleLeft.isBlock() && ! styleRight.isBlock() && ( ! styleUp.isBlock() || ! styleDown.isBlock() ) )
+				{
+					acrossEntry = true;
+				}
+
+				// Can this be the start of a down entry?
+				if ( styleUp.isBlock() && ! styleDown.isBlock() && ( ! styleLeft.isBlock() || ! styleRight.isBlock() ) )
+				{
+					downEntry = true;
+				}
+
+				// Can this be the unchecked start of an across entry?
+				if ( playDirs == 1 && ! styleRight.isBlock() )
+				{
+					acrossEntry = true;
+				}
+
+				// Can this be the unchecked start of a down entry?
+				if ( playDirs == 1 && ! styleDown.isBlock() )
+				{
+					downEntry = true;
+				}
+
+				if ( acrossEntry || downEntry )
+				{
+					clueNumber++;
+
+					if ( acrossEntry )
+					{
+						XPFClue clue = buildNextClue( clues, coord, Integer.valueOf( clueNumber ).toString() );
+						clue.setDirection( "Across" );
+						locatedClues.add( clue );
+					}
+
+					if ( downEntry )
+					{
+						XPFClue clue = buildNextClue( clues, coord, Integer.valueOf( clueNumber ).toString() );
+						clue.setDirection( "Down" );
+						locatedClues.add( clue );
+					}
+				}
+			}
+		}
+
+		return locatedClues;
+	}
+
+	private XPFClue buildNextClue( List<XPFClue> clues, Coordinate coord, String clueNumber )
+	{
+		XPFClue newClue = new XPFClue();
+		XPFClue clue = clues.remove( 0 );
+
+		newClue.setAnswer( clue.getAnswer() );
+		newClue.setText( clue.getText() );
+		newClue.setCoordinate( coord );
+		newClue.setNumber( clueNumber );
+
+		return newClue;
 	}
 
 	private static boolean allCluesAreLocated( XPFPuzzle puzzle )
@@ -379,18 +473,18 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 		{
 			throw new IOException( new NullPointerException( "Null puzzle cannot be serialized" ) );
 		}
-		
+
 		if ( ! allCluesAreLocated( puzzle ) && ! allCluesNotLocated( puzzle ) )
 		{
 			throw new IOException( "Either all clues must have locations or all clues must not have locations" );
 		}
-		
+
 		// TODO More validation
 	}
 
 	public static void main( String[] arg ) throws IOException
 	{
-		XPFPuzzle p1 = new XPFPuzzle( 5, 5 );
+		XPFPuzzle p1 = new XPFPuzzle( 3, 3 );
 		p1.setTitle( "A" );
 		char letter = 'A';
 		for ( Coordinate coord : p1.getCoordinates() )
@@ -398,24 +492,18 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 			p1.getSolutions().get( coord ).setLetter( letter );
 			letter = (char) ( ( letter == 'Z' ) ? 'A' : ( letter + 1 ));
 		}
-
-		for ( int i = 1; i <= 5; ++i )
-		{
-			p1.getCellStyles().get( i, i ).setBlock( true );
-		}
-
-		p1.getCellStyles().get( 5, 1 ).setCircled( true );
-		p1.getCellStyles().get( 1, 5 ).setCircled( true );
-
-		p1.setNotepad( "This is not a pipe.<br />Yikes!" );
-
-		p1.getSolutions().get( 2, 4 ).setLetter( 'D' );
-		p1.getSolutions().get( 2, 4 ).setRebus( "DIT" );
-
-		p1.getSolutions().get( 2, 3 ).setLetter( 'D' );
-		p1.getSolutions().get( 2, 3 ).setRebus( "DAH" );
-
-		p1.getCellStyles().get( 4, 4 ).setShade( "#00ffaa" );
+		
+		p1.getCellStyles().get( 1, 1 ).setBlock( true );
+		p1.getCellStyles().get( 2, 2 ).setBlock( true );
+		
+		List<XPFClue> clues = new ArrayList<XPFClue>();
+		clues.add( new XPFClue( "1A", "1a" ) );
+		clues.add( new XPFClue( "1D", "1d" ) );
+		clues.add( new XPFClue( "2D", "2d" ) );
+		clues.add( new XPFClue( "3D", "3d" ) );
+		clues.add( new XPFClue( "4A", "4a" ) );
+		clues.add( new XPFClue( "5A", "5a" ) );
+		p1.setClues( clues );
 
 		XPFPuzzleCollection collection = new XPFPuzzleCollection();
 
