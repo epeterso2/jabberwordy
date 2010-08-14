@@ -13,6 +13,17 @@ public class XPFClue {
 	private String text = null;
 	
 	private String answer = null;
+	
+	public XPFClue()
+	{
+		;
+	}
+	
+	public XPFClue( String text, String answer )
+	{
+		this.text = text;
+		this.answer = answer;
+	}
 
 	public Coordinate getCoordinate() {
 		return coordinate;
