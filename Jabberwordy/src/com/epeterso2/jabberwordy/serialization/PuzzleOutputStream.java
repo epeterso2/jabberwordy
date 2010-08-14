@@ -28,35 +28,53 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.epeterso2.jabberwordy.serialization.puz.PUZPuzzle;
+
 /**
- * This abstract class is the superclass of all classes that implement puzzle deserializers,
- * one which provides an {@link OutputStream} implementation.
+ * This abstract class is the superclass of all classes that implement puzzle deserializers, which convert
+ * puzzle images into puzzle objects.
  * <p>
- * Subclasses must implement the {@link #toPuzzle()} method, which is responsible for converting
- * the raw data into a puzzle object. To deserialize a puzzle, an application must write the
- * serialized puzzle data to this output stream.
- * The raw data must be a serialized representation of the generic type parameter of the
- * implementing subclass.
- * When all of the data has been written, the application must invoke the {@link #toPuzzle()}
- * method to return the deserialized puzzle object.
+ * This class and its subclasses are used to convert a sequence of bytes of a puzzle image that represents a particular puzzle into an
+ * object representation of the same puzzle. To convert the puzzle image to a puzzle object, an application
+ * must:
+ * <ol>
+ * <li>Create a new instance of a {@link PuzzleOutputStream} subclass that can deserialize the puzzle image,</li>
+ * <li>Use the {@link OutputStream#write(int)} method (or other related write methods) of that instance to
+ * write the puzzle image, and</li>
+ * <li>Call the {@link #toPuzzle()} method of that instance, which will build a puzzle object from the written puzzle image.
+ * </ol>
+ * A subclass of this class will return a puzzle object of a type specific to the subclass. This object is returned
+ * by the implementation of the abstract method {@link #toPuzzle()}. 
  * <p>
- * Subclasses of this class can access the serialized puzzle image by calling the
- * {@link #toByteArray()} method from their {@link #toPuzzle()}
- * methods.
+ * If an instance of this class is constructed with an {@link InputStream} parameter, then the entire contents of the input stream are read
+ * and immediately written to this {@link OutputStream}. This provides an easy way to implement the reading of
+ * puzzle images from files, URLs, and other input streams, like so:
+ * <p>
+ * <tt>MyPuzzle puzzle = new MyPuzzleOutputStream( new FileInputStream( new File( "MyPuzzle.puz" ) ) ).toPuzzle();</tt>
+ * <p>
+ * or:
+ * <p>
+ * <tt>MyPuzzle puzzle = new MyPuzzleOutputStream( new URL( "http://www.puzzles.com/puzzle123.puz" ).openStream() ).toPuzzle();</tt>
+ * <p>
+ * @param P The class of puzzle object to be returned by the {@link #toPuzzle()} method 
  * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
- * @param <P> The class of puzzle object to be serialized by an implementing class
+ * @see OutputStream#write(byte[])
+ * @see OutputStream#write(byte[], int, int)
  */
 public abstract class PuzzleOutputStream<P> extends OutputStream {
 	
 	private ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 	
+	/**
+	 * Constructs a new puzzle image output stream.
+	 */
 	public PuzzleOutputStream()
 	{
 		;
 	}
 
 	/**
-	 * Constructs a new output stream using the data read from an input stream.
+	 * Constructs a new puzzle image output stream using the data read from an input stream.
 	 * This method reads all of the data from the given {@link InputStream} and writes
 	 * it to its own output stream. If the given input stream contains an entire puzzle
 	 * image, then the puzzle may be deserialized immediately with the {@link #toPuzzle()}
@@ -82,19 +100,20 @@ public abstract class PuzzleOutputStream<P> extends OutputStream {
 	}
 	
 	/**
-	 * Returns the byte[] representation of the serialized puzzle image.
+	 * Returns the byte[] representation of the serialized puzzle image. The array contains all of the data
+	 * that has been written to this output stream so far.
 	 * @return The puzzle image
 	 */
 	public byte[] toByteArray()
 	{
 		return outputStream.toByteArray();
 	}
-	
+
 	/**
 	 * Converts the serialized puzzle image into a puzzle object. Implementations of this method
 	 * may call the {@link #toByteArray()} method to retrieve the serialized puzzle image.
 	 * @return The deserialized puzzle object
-	 * @throws PuzzleDeserializationException An error occurred during deserialization
+	 * @throws IOException An error occurred during deserialization
 	 */
 	public abstract P toPuzzle() throws IOException;
 

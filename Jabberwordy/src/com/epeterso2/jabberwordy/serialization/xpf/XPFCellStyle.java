@@ -23,43 +23,50 @@
 
 package com.epeterso2.jabberwordy.serialization.xpf;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-
-import com.epeterso2.jabberwordy.serialization.PuzzleOutputStream;
-
 /**
- * Provides an {@link OutputStream} for deserializing an XPF image into an {@link XPFPuzzleCollection} object.
- * The order in which the puzzles appear in the {@link XPFPuzzleCollection} is identical to the order in which they
- * appear in the deserialized XPF image.
  * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
  * @see <a href="http://www.xwordinfo.com/XPF/">XWordInfo XPF Universal Crossword Puzzle Format</a>
  */
-public class XPFPuzzleOutputStream extends PuzzleOutputStream<XPFPuzzleCollection> {
-
-	/**
-	 * Converts a serialized XPF image into an {@link XPFPuzzleCollection}.
-	 */
-	@Override
-	public XPFPuzzleCollection toPuzzle() throws IOException
-	{
-		try
-		{
-			return buildCollection( new XPFPuzzleCollectionContext( new SAXBuilder().build( new String( toByteArray() ) ) ) );
-		}
-		
-		catch ( JDOMException e )
-		{
-			throw new IOException( e );
-		}
+public class XPFCellStyle {
+	
+	private boolean circled = false;
+	
+	private boolean block = false;
+	
+	private boolean borderless = false;
+	
+	private String shade = null;
+	
+	public boolean isCircled() {
+		return circled;
 	}
 
-	private XPFPuzzleCollection buildCollection( XPFPuzzleCollectionContext context ) throws IOException
-	{
-		return new XPFPuzzleCollection();
+	public void setCircled(boolean circled) {
+		this.circled = circled;
+	}
+
+	public boolean isBlock() {
+		return block;
+	}
+
+	public void setBlock(boolean block) {
+		this.block = block;
+	}
+
+	public boolean isBorderless() {
+		return borderless;
+	}
+
+	public void setBorderless(boolean borderless) {
+		this.borderless = borderless;
+	}
+
+	public String getShade() {
+		return shade;
+	}
+
+	public void setShade(String shade) {
+		this.shade = shade;
 	}
 
 }

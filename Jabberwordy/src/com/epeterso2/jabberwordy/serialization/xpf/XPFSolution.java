@@ -20,19 +20,20 @@
  * THE SOFTWARE.
  */
 
-package com.epeterso2.jabberwordy.serialization.puz;
+package com.epeterso2.jabberwordy.serialization.xpf;
 
 /**
  * Contains the complete solution for a single cell in a PUZ puzzle.
  * <p>
- * A PUZ file image has two possible solutions for each cell in the grid: a single letter answer as well as a rebus (multi-letter
+ * An XPF puzzle has two possible solutions for each cell in the grid: a single letter answer as well as a rebus (multi-letter
  * or symbol) answer. The single letter answers must be in the range of 'A' through 'Z' - these are stored in the solution
  * section of the image. The rebus answers can be one or more characters long, and the answers may be either individual letters
  * or some punctuation symbols. Either solution is considered valid when checking the solution to the puzzle. But if a puzzle
  * is encrypted, then only the single-letter answers are used in the unlock code verification.
  * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
+ * @see <a href="http://www.xwordinfo.com/XPF/">XWordInfo XPF Universal Crossword Puzzle Format</a>
  */
-public class PUZSolution {
+public class XPFSolution {
 	
 	private char letter = 0;
 	
@@ -41,7 +42,7 @@ public class PUZSolution {
 	/**
 	 * Constructs a new solution
 	 */
-	public PUZSolution()
+	public XPFSolution()
 	{
 		;
 	}
@@ -50,7 +51,7 @@ public class PUZSolution {
 	 * Constructs a new solution and sets the single-letter answer
 	 * @param letter The single-letter answer
 	 */
-	public PUZSolution( char letter )
+	public XPFSolution( char letter )
 	{
 		this.setLetter(letter);
 	}
@@ -59,7 +60,7 @@ public class PUZSolution {
 	 * Constructs a new solution and sets the rebus answer
 	 * @param rebus The rebus answer
 	 */
-	public PUZSolution( String rebus )
+	public XPFSolution( String rebus )
 	{
 		this.setRebus(rebus);
 	}
@@ -69,7 +70,7 @@ public class PUZSolution {
 	 * @param letter The single-letter answer
 	 * @param rebus The rebus answer
 	 */
-	public PUZSolution( char letter, String rebus )
+	public XPFSolution( char letter, String rebus )
 	{
 		this.setLetter(letter);
 		this.setRebus(rebus);

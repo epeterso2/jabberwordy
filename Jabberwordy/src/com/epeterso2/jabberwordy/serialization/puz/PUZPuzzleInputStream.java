@@ -25,6 +25,7 @@ package com.epeterso2.jabberwordy.serialization.puz;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -34,10 +35,14 @@ import com.epeterso2.jabberwordy.util.Coordinate;
 import com.epeterso2.jabberwordy.util.CoordinateMap;
 
 /**
- * Serializes a {@link PUZPuzzle} object into a PUZ file image as an {@link OutputStream}.
+ * Serializes a {@link PUZPuzzle} object into a PUZ image as an {@link InputStream}.
+ * The image created by this class is in version 1.3 of the PUZ format.
  * <p>
- * This class is used both to verify that a given {@link PUZPuzzle} can be serialized and to perform the actual serialization.
+ * The {@link #validate()} method of this class may be used to verify that a given {@link PUZPuzzle} object
+ * has sufficient integrity to be serialized.
  * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
+ * @see PuzzleInputStream
+ * @see <a href="http://code.google.com/p/puz/wiki/FileFormat">The PUZ Project</a>
  */
 public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 
@@ -497,8 +502,9 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 	}
 
 	/**
-	 * Analyzes the {@link PUZPuzzle} object associated with this output stream to determine if it can be serialized successfully or not.
-	 * @throws PuzzleSerializationException if the puzzle cannot be serialized
+	 * Analyzes the {@link PUZPuzzle} object associated with this output stream
+	 * to determine if it can be serialized successfully or not.
+	 * @throws IOException if the puzzle cannot be serialized
 	 */
 	public void validate() throws IOException
 	{

@@ -23,43 +23,31 @@
 
 package com.epeterso2.jabberwordy.serialization.xpf;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-
-import com.epeterso2.jabberwordy.serialization.PuzzleOutputStream;
+import java.util.ArrayList;
 
 /**
- * Provides an {@link OutputStream} for deserializing an XPF image into an {@link XPFPuzzleCollection} object.
- * The order in which the puzzles appear in the {@link XPFPuzzleCollection} is identical to the order in which they
- * appear in the deserialized XPF image.
+ * A container class for a collection of {@link XPFPuzzle} objects. This class is simply an {@link ArrayList} of {@link XPFPuzzle} objects. 
  * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
- * @see <a href="http://www.xwordinfo.com/XPF/">XWordInfo XPF Universal Crossword Puzzle Format</a>
+ * @see <a href="http://www.xwordinfo.com/XPF/">XPF Universal Crossword Puzzle Data Format</a>
  */
-public class XPFPuzzleOutputStream extends PuzzleOutputStream<XPFPuzzleCollection> {
+@SuppressWarnings("serial")
+public class XPFPuzzleCollection extends ArrayList<XPFPuzzle> {
 
 	/**
-	 * Converts a serialized XPF image into an {@link XPFPuzzleCollection}.
+	 * Create a new collection with no puzzles in it
 	 */
-	@Override
-	public XPFPuzzleCollection toPuzzle() throws IOException
+	public XPFPuzzleCollection()
 	{
-		try
-		{
-			return buildCollection( new XPFPuzzleCollectionContext( new SAXBuilder().build( new String( toByteArray() ) ) ) );
-		}
-		
-		catch ( JDOMException e )
-		{
-			throw new IOException( e );
-		}
+		super();
 	}
 
-	private XPFPuzzleCollection buildCollection( XPFPuzzleCollectionContext context ) throws IOException
+	/**
+	 * Create a new collection with a specified puzzle in it
+	 * @param puzzle The puzzle to add to the collection
+	 */
+	public XPFPuzzleCollection( XPFPuzzle puzzle )
 	{
-		return new XPFPuzzleCollection();
+		super();
+		add( puzzle );
 	}
-
 }

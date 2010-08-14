@@ -27,22 +27,26 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * This abstract class is the superclass of all classes that implement puzzle serializers,
- * one which provides an {@link InputStream} implementation using a puzzle object as a basis.
+ * This abstract class is the superclass of all classes that implement puzzle serializers, which convert
+ * puzzle objects into puzzle images.
  * <p>
- * An implementation of this class operates on a puzzle of a given type. The puzzle associated with
- * an instance of an implementor can be obtained with the {@link #getPuzzle()} method.
- * <p>
- * Subclasses must implement the {@link #toByteArray()} method, which is responsible for converting
- * the puzzle object into a serialized byte array. This method will be called during the first call to
- * the {@link #read()} method of this class to serialize the puzzle. Each call to {@link #read()} will
- * return the next byte of the serialized puzzle.
- * <p>
- * Subclasses will also need to provide an implementation of the one-argument constructor, which
- * takes a puzzle of the generic parameter type. This constructor must call the constructor of the
- * parent class with the given puzzle.
+ * This class and its subclasses are used to convert a puzzle object into a sequence of bytes that
+ * represents the same puzzle. To convert the puzzle object to a puzzle image, an application
+ * must:
+ * <ol>
+ * <li>Create a new instance of a {@link PuzzleInputStream} subclass,</li>
+ * <li>Associate a puzzle object with the input stream via the constructor or the {@link #setPuzzle(Object)} method</li>
+ * <li>Use the {@link InputStream#read()} method (or other related read methods) of that instance to
+ * read the serialized puzzle image.</li>
+ * </ol>
+ * A subclass of this class will serialize the puzzle object in a manner specific to the subclass.
+ * This serialized image is returned by the implementation of the abstract method {@link #toByteArray()}. 
+ * That method is called to serialize the puzzle the first time the {@link #read()} method of this class is called.
+ * Subsequent calls to the {@link #read()} method will return the subsequent bytes of the serialized image.
+ * @param P The class of puzzle object to be serialized by the {@link #toByteArray()} method 
  * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
- * @param <P> The class of puzzle object to be serialized by an implementing class
+ * @see InputStream#read(byte[])
+ * @see InputStream#read(byte[], int, int)
  */
 public abstract class PuzzleInputStream<P> extends InputStream {
 	

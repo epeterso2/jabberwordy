@@ -25,34 +25,41 @@ package com.epeterso2.jabberwordy.serialization.puz;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import com.epeterso2.jabberwordy.serialization.PuzzleOutputStream;
 import com.epeterso2.jabberwordy.util.Coordinate;
 
 /**
- * Provides an {@link InputStream} for deserializing a PUZ file image into a {@link PUZPuzzle} object.
- * Once all of the PUZ file image data have been written to this input stream, the {@link #toPuzzle()} method
- * may be invoked to return the deserialized puzzle.
- * If the {@code lenient} property of this class is set,
- * then checksums in the PUZ image are not validated prior to deserialization.
- * If the {@code lenient} property is not set, then
- * a {@link PuzzleDeserializationException} is thrown if any of the PUZ checksums does not match its computed value for the image.  
+ * Provides an {@link OutputStream} for deserializing a PUZ image into a {@link PUZPuzzle} object.
+ * <p>
+ * The <tt>strict</tt> property of this class controls how strictly the checksums in the PUZ file image are checked
+ * prior to deserialization. If the <tt>strict</tt> property is <tt>true</tt> (the default value), then checksums for
+ * the PUZ image are computed and compared against the checksums stored in the image; if the checksums do not match,
+ * an {@link IOException} is thrown. If the <tt>strict</tt> property is <tt>false</tt>, the checksums are not validated
+ * prior to deserialization.
+ * <p>
+ * Two individual puzzles produced by this class will be equal as long as they are logically equivalent. If the puzzles have
+ * an equal grid, solution, player state, clues, and other descriptive properties, then the puzzles will be equal even if
+ * some details of their file representations vary (such as the order of extra sections or the numbering of rebus entries).
  * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
+ * @see PuzzleOutputStream
+ * @see <a href="http://code.google.com/p/puz/wiki/FileFormat">The PUZ Project</a>
  */
 public class PUZPuzzleOutputStream extends PuzzleOutputStream<PUZPuzzle> {
 
-	private boolean lenient = false;
+	private boolean strict = true;
 
 	/**
-	 * Get the lenient flag value.
-	 * @return True for lenient deserialization, false for strict deserialization
+	 * Returns the status of checksum verification
+	 * @return <tt>true</tt> if the PUZ file image checksums will be validated prior to deserialization, <tt>false</tt> otherwise
 	 */
-	public boolean isLenient() {
-		return lenient;
+	public boolean isStrict() {
+		return strict;
 	}
 
 	/**
-	 * Constructs a new PUZ deserializing output stream
+	 * Constructs a new output stream
 	 */
 	public PUZPuzzleOutputStream()
 	{
@@ -60,18 +67,20 @@ public class PUZPuzzleOutputStream extends PuzzleOutputStream<PUZPuzzle> {
 	}
 
 	/**
-	 * Constructs a new PUZ deserializing output stream with a leniency setting
-	 * @param lenient If true, the deserializer will ignore bad checksums in the PUZ image
+	 * Constructs a new PUZ output stream with a strictness setting
+	 * @param strict If <tt>true</tt>, the PUZ file image checksums will be validated prior to deserialization.
+	 * If <tt>false</tt>, the checksums will not be validated prior to deserialization.
 	 */
-	public PUZPuzzleOutputStream( boolean lenient )
+	public PUZPuzzleOutputStream( boolean strict )
 	{
 		this();
-		this.lenient = lenient;
+		this.strict = strict;
 	}
 
 	/**
 	 * Constructs a new PUZ deserializing output stream using an input stream.
 	 * The entire input stream will be read then written to this output stream.
+	 * The input stream is not closed after it has been read.
 	 * @param inputStream The inputStream containing a PUZ file image
 	 */
 	public PUZPuzzleOutputStream( InputStream inputStream ) throws IOException
@@ -80,23 +89,27 @@ public class PUZPuzzleOutputStream extends PuzzleOutputStream<PUZPuzzle> {
 	}
 	
 	/**
-	 * Constructs a new PUZ deserializing output stream using an input stream with a leniency setting.
+	 * Constructs a new PUZ deserializing output stream using an input stream with a strictness setting.
 	 * The entire input stream will be read then written to this output stream.
 	 * @param inputStream The inputStream containing a PUZ file image
+	 * @param strict If <tt>true</tt>, the PUZ file image checksums will be validated prior to deserialization.
+	 * If <tt>false</tt>, the checksums will not be validated prior to deserialization.
 	 */
-	public PUZPuzzleOutputStream( InputStream inputStream, boolean lenient ) throws IOException
+	public PUZPuzzleOutputStream( InputStream inputStream, boolean strict ) throws IOException
 	{
 		this( inputStream );
-		this.lenient = lenient;
+		this.strict = strict;
 	}
 
 	/**
 	 * Deserializes the PUZ image written into this input stream into a {@link PUZPuzzle} object.
-	 * If the {@code lenient} property of this class is true,
-	 * then checksum validation is not performed. If the solution in the PUZ image is scrambled, the unlock code is found
-	 * and the solution is descrambled automatically.
-	 * @return The deserialized puzzle object
-	 * @throws PuzzleDeserializationException An inconsistency in the PUZ image was detected that prevents successful deserialization.
+	 * If the <tt>strict</tt> property of this class is <tt>true</tt>,
+	 * then checksum validation is performed. If the solution in the PUZ image is encrypted, the unlock code is found
+	 * and the solution is decrypted automatically.
+	 * @return The deserialized {@link PUZPuzzle} object
+	 * @throws IOException An exception occurred during deserialization.
+	 * This can happen if an inconsistency in the PUZ image is detected or if the <tt>strict</tt> property is <tt>true</tt>
+	 * and the computed checksums of the PUZ image do not match the checksums stored in the PUZ image.
 	 */
 	@Override
 	public PUZPuzzle toPuzzle() throws IOException
@@ -105,7 +118,7 @@ public class PUZPuzzleOutputStream extends PuzzleOutputStream<PUZPuzzle> {
 		PUZContext context = new PUZContext( toByteArray() );
 
 		// Validate the image if we're not lenient
-		if ( ! isLenient() && ! context.isValidImage() )
+		if ( ! isStrict() && ! context.isValidImage() )
 		{
 			throw new IOException();
 		}
@@ -113,6 +126,7 @@ public class PUZPuzzleOutputStream extends PuzzleOutputStream<PUZPuzzle> {
 		// Build a new puzzle object
 		PUZPuzzle puzzle = new PUZPuzzle( context.getWidth(), context.getHeight() );
 
+		// Establish a fault barrier for deserialization. At this point, the image is assumed to be valid (non-corrupted).
 		try
 		{
 			// Find the unlock code
@@ -164,11 +178,14 @@ public class PUZPuzzleOutputStream extends PuzzleOutputStream<PUZPuzzle> {
 			puzzle.assignClues( context.getClues() );
 		}
 
+		// Fault barrier - wrap all caught exceptions as an IOException. This could include a variety of
+		// null pointer, array out of bounds, and other exceptions if the PUZ file image is corrupted.
 		catch ( Exception e )
 		{
 			throw new IOException( e );
 		}
 
+		// Return the deserialized puzzle to the caller
 		return puzzle;
 	}
 

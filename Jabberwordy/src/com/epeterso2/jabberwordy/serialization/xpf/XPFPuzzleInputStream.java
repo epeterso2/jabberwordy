@@ -24,18 +24,404 @@
 package com.epeterso2.jabberwordy.serialization.xpf;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.jdom.CDATA;
+import org.jdom.Content;
 import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 import com.epeterso2.jabberwordy.serialization.PuzzleInputStream;
+import com.epeterso2.jabberwordy.util.Coordinate;
 
-public class XPFPuzzleInputStream extends PuzzleInputStream<Document> {
+/**
+ * Serializes an {@link XPFPuzzleCollection} object into an XPF image as an {@link InputStream}. This serializer generates puzzles
+ * that conform to version 1.0 of the XPF specification. The order in which the puzzles appear in the serialized XPF image is identical
+ * to the order in which they appear in the {@link XPFPuzzleCollection}.
+ * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
+ * @see <a href="http://www.xwordinfo.com/XPF/">XWordInfo XPF Universal Crossword Puzzle Format</a>
+ */
+public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection> {
 
+	private String encoding = "UTF-8";
+
+	private boolean compact = false;
+
+	private static SimpleDateFormat dateFormatter = new SimpleDateFormat( "M/d/yyyy" );
+
+	public XPFPuzzleInputStream setCompact(boolean compact) {
+		this.compact = compact;
+		return this;
+	}
+
+	public boolean isCompact() {
+		return compact;
+	}
+
+	public XPFPuzzleInputStream setEncoding( String encoding )
+	{
+		this.encoding = encoding;
+		return this;
+	}
+
+	public XPFPuzzleInputStream( XPFPuzzleCollection collection )
+	{
+		super( collection );
+	}
+
+	/**
+	 * Serializes the puzzle associated with this class into an XPF image.
+	 */
 	@Override
 	public byte[] toByteArray() throws IOException
 	{
-		return new XMLOutputter().outputString( getPuzzle() ).getBytes();
+		// Make sure we're ready to serialize
+		validate();
+		
+		// Write the output
+		return new XMLOutputter( ( isCompact() ? Format.getCompactFormat() : Format.getPrettyFormat() ).setEncoding( encoding ) ).outputString( buildDocument( getPuzzle() ) ).getBytes();
+	}
+
+	private Document buildDocument( XPFPuzzleCollection puzzleCollection )
+	{
+		Document document = new Document();
+
+		Element rootElement = new Element( "Puzzles" );
+		rootElement.setAttribute( "Version", "1.0" );
+
+		for ( XPFPuzzle puzzle : puzzleCollection )
+		{
+			rootElement.addContent( buildPuzzle( puzzle ) );
+		}
+
+		document.setRootElement( rootElement );
+
+		return document;
+	}
+
+	private Element buildPuzzle( XPFPuzzle puzzle )
+	{
+		Element puzzleElement = new Element( "Puzzle" );
+
+		addElementIfNonNull( puzzleElement, buildSimpleElement( "Type", puzzle.getType() ) );
+		addElementIfNonNull( puzzleElement, buildSimpleElement( "Title", puzzle.getTitle() ) );
+		addElementIfNonNull( puzzleElement, buildSimpleElement( "Author", puzzle.getAuthor() ) );
+		addElementIfNonNull( puzzleElement, buildSimpleElement( "Editor", puzzle.getEditor() ) );
+		addElementIfNonNull( puzzleElement, buildSimpleElement( "Copyright", puzzle.getCopyright() ) );
+		addElementIfNonNull( puzzleElement, buildSimpleElement( "Publisher", puzzle.getPublisher() ) );
+		addElementIfNonNull( puzzleElement, buildSimpleElement( "Date", puzzle.getDate() == null ? null : dateFormatter.format( puzzle.getDate() ) ) );
+		addElementIfNonNull( puzzleElement, buildSizeElement( puzzle ) );
+		addElementIfNonNull( puzzleElement, buildGridElement( puzzle ) );
+		addElementIfNonNull( puzzleElement, buildCirclesElement( puzzle ) );
+		addElementIfNonNull( puzzleElement, buildRebusEntriesElement( puzzle ) );
+		addElementIfNonNull( puzzleElement, buildShadesElement( puzzle ) );
+		addElementIfNonNull( puzzleElement, buildCluesElement( puzzle ) );
+		addElementIfNonNull( puzzleElement, buildNotepadElement( puzzle ) );
+
+		return puzzleElement;
+	}
+
+	private Element buildNotepadElement( XPFPuzzle puzzle )
+	{
+		Element element = null;
+
+		if ( puzzle.getNotepad() != null )
+		{
+			element = new Element( "Notepad" );
+			element.addContent( new CDATA( puzzle.getNotepad() ) );
+		}
+
+		return element;
+	}
+
+	private Element buildCluesElement( XPFPuzzle puzzle )
+	{
+		Element cluesElement = null;
+
+		if ( puzzle.getClues() != null )
+		{
+			Set<XPFClue> clues = allCluesAreLocated( puzzle ) ? puzzle.getClues() : locateClues( puzzle );
+
+			for ( XPFClue clue : clues )
+			{
+				if ( cluesElement == null )
+				{
+					cluesElement = new Element( "Clues" );
+				}
+				
+				Element clueElement = new Element( "Clue" );
+				clueElement.setAttribute( "Row", Integer.valueOf( clue.getCoordinate().getY() ).toString() );
+				clueElement.setAttribute( "Col", Integer.valueOf( clue.getCoordinate().getX() ).toString() );
+				clueElement.setAttribute( "Num", clue.getNumber() );
+				clueElement.setAttribute( "Dir", clue.getDirection() );
+				clueElement.setAttribute( "Ans", clue.getAnswer() );
+				clueElement.setText( clue.getText() );
+				
+				cluesElement.addContent( clueElement );
+			}
+		}
+
+		return cluesElement;
+	}
+
+	private Set<XPFClue> locateClues( XPFPuzzle puzzle )
+	{
+		Set<XPFClue> clues = new HashSet<XPFClue>();
+		
+		// TODO
+
+		return clues;
+	}
+
+	private static boolean allCluesAreLocated( XPFPuzzle puzzle )
+	{
+		for ( XPFClue clue : puzzle.getClues() )
+		{
+			if ( ! clue.isLocated() )
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private static boolean allCluesNotLocated( XPFPuzzle puzzle )
+	{
+		for ( XPFClue clue : puzzle.getClues() )
+		{
+			if ( clue.isLocated() )
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private Element buildShadesElement( XPFPuzzle puzzle )
+	{
+		Element shadesElement = null;
+
+		for ( Coordinate coord : puzzle.getCoordinates() )
+		{
+			if ( puzzle.getCellStyles().get( coord ).getShade() != null )
+			{
+				if ( shadesElement == null )
+				{
+					shadesElement = new Element( "Shades" );
+				}
+
+				Element shadeElement = new Element( "Shade" );
+				shadeElement.setAttribute( "Row", Integer.valueOf( coord.getY() ).toString() );
+				shadeElement.setAttribute( "Col", Integer.valueOf( coord.getX() ).toString() );
+				shadeElement.setText( puzzle.getCellStyles().get( coord ).getShade() );
+
+				shadesElement.addContent( shadeElement );
+			}
+		}
+
+		return shadesElement;
+	}
+
+	private Element buildRebusEntriesElement( XPFPuzzle puzzle )
+	{
+		Element rebusEntriesElement = null;
+
+		for ( Coordinate coord : puzzle.getCoordinates() )
+		{
+			XPFSolution solution = puzzle.getSolutions().get( coord );
+
+			if ( solution.getRebus() != null && solution.getRebus().length() > 0 )
+			{
+				if ( rebusEntriesElement == null )
+				{
+					rebusEntriesElement = new Element( "RebusEntries" );
+				}
+
+				Element rebusEntry = new Element( "Rebus" );
+				rebusEntry.setAttribute( "Row", Integer.valueOf( coord.getY() ).toString() );
+				rebusEntry.setAttribute( "Col", Integer.valueOf( coord.getX() ).toString() );
+				rebusEntry.setAttribute( "Short", Character.valueOf( solution.getLetter() ).toString() );
+				rebusEntry.setText( solution.getRebus() );
+
+				rebusEntriesElement.addContent( rebusEntry );
+			}
+		}
+
+		return rebusEntriesElement;
+	}
+
+	private Element buildCirclesElement( XPFPuzzle puzzle )
+	{
+		Element circlesElement = null;
+
+		for ( Coordinate coord : puzzle.getCoordinates() )
+		{
+			if ( puzzle.getCellStyles().get( coord ).isCircled() )
+			{
+				if ( circlesElement == null )
+				{
+					circlesElement = new Element( "Circles" );
+				}
+
+				Element circleElement = new Element( "Circle" );
+				circleElement.setAttribute( "Row", Integer.valueOf( coord.getY() ).toString() );
+				circleElement.setAttribute( "Col", Integer.valueOf( coord.getX() ).toString() );
+
+				circlesElement.addContent( circleElement );
+			}
+		}
+
+		return circlesElement;
+	}
+
+	private Element buildSimpleElement( String name, String text )
+	{
+		Element element = null;
+
+		if ( text != null )
+		{
+			element = new Element( name );
+			element.setText( text );
+		}
+
+		return element;
+	}
+
+	private Element buildGridElement( XPFPuzzle puzzle )
+	{
+		Element gridElement = new Element( "Grid" );
+
+		for ( int row = 1; row <= puzzle.getRows(); ++row )
+		{
+			gridElement.addContent( buildRowElement( puzzle, row ) );
+		}
+
+		return gridElement;
+	}
+
+	private Element buildRowElement( XPFPuzzle puzzle, int row )
+	{
+		Element rowElement = new Element( "Row" );
+		StringBuilder builder = new StringBuilder();
+
+		for ( int col = 1; col <= puzzle.getCols(); ++col )
+		{
+			if ( puzzle.getCellStyles().get( col, row ).isBlock() )
+			{
+				builder.append( "." );
+			}
+
+			else if ( puzzle.getCellStyles().get( col, row ).isBorderless() )
+			{
+				builder.append( "~" );
+			}
+
+			else
+			{
+				builder.append( puzzle.getSolutions().get( col, row ).getLetter() );
+			}
+		}
+
+		rowElement.setText( builder.toString() );
+
+		return rowElement;
+	}
+
+	private Element buildSizeElement( XPFPuzzle puzzle )
+	{
+		Element sizeElement = new Element( "Size" );
+
+		Element rowsElement = new Element( "Rows" );
+		rowsElement.setText( Integer.valueOf( puzzle.getRows() ).toString() );
+		sizeElement.addContent( rowsElement );
+
+		Element colsElement = new Element( "Cols" );
+		colsElement.setText( Integer.valueOf( puzzle.getCols() ).toString() );
+		sizeElement.addContent( colsElement );
+
+		return sizeElement;
+	}
+
+	private void addElementIfNonNull( Element rootElement, Content childContent )
+	{
+		if ( childContent != null )
+		{
+			rootElement.addContent( childContent );
+		}
+	}
+
+	public void validate() throws IOException
+	{
+		validate( getPuzzle() );
+	}
+
+	public static void validate( XPFPuzzleCollection collection ) throws IOException
+	{
+		if ( collection != null )
+		{
+			for ( XPFPuzzle puzzle : collection )
+			{
+				validate( puzzle );
+			}
+		}
+	}
+
+	public static void validate( XPFPuzzle puzzle ) throws IOException
+	{
+		if ( puzzle == null )
+		{
+			throw new IOException( new NullPointerException( "Null puzzle cannot be serialized" ) );
+		}
+		
+		if ( ! allCluesAreLocated( puzzle ) && ! allCluesNotLocated( puzzle ) )
+		{
+			throw new IOException( "Either all clues must have locations or all clues must not have locations" );
+		}
+		
+		// TODO More validation
+	}
+
+	public static void main( String[] arg ) throws IOException
+	{
+		XPFPuzzle p1 = new XPFPuzzle( 5, 5 );
+		p1.setTitle( "A" );
+		char letter = 'A';
+		for ( Coordinate coord : p1.getCoordinates() )
+		{
+			p1.getSolutions().get( coord ).setLetter( letter );
+			letter = (char) ( ( letter == 'Z' ) ? 'A' : ( letter + 1 ));
+		}
+
+		for ( int i = 1; i <= 5; ++i )
+		{
+			p1.getCellStyles().get( i, i ).setBlock( true );
+		}
+
+		p1.getCellStyles().get( 5, 1 ).setCircled( true );
+		p1.getCellStyles().get( 1, 5 ).setCircled( true );
+
+		p1.setNotepad( "This is not a pipe.<br />Yikes!" );
+
+		p1.getSolutions().get( 2, 4 ).setLetter( 'D' );
+		p1.getSolutions().get( 2, 4 ).setRebus( "DIT" );
+
+		p1.getSolutions().get( 2, 3 ).setLetter( 'D' );
+		p1.getSolutions().get( 2, 3 ).setRebus( "DAH" );
+
+		p1.getCellStyles().get( 4, 4 ).setShade( "#00ffaa" );
+
+		XPFPuzzleCollection collection = new XPFPuzzleCollection();
+
+		collection.add( p1 );
+
+		System.out.println( new String( new XPFPuzzleInputStream( collection ).toByteArray() ) );
 	}
 
 }
