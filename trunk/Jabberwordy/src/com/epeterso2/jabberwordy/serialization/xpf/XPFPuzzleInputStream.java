@@ -73,6 +73,11 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 	{
 		super( collection );
 	}
+	
+	public XPFPuzzleInputStream( XPFPuzzle puzzle )
+	{
+		super( new XPFPuzzleCollection( puzzle ) );
+	}
 
 	/**
 	 * Serializes the puzzle associated with this class into an XPF image.
@@ -84,7 +89,8 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 		validate();
 
 		// Write the output
-		return new XMLOutputter( ( isCompact() ? Format.getCompactFormat() : Format.getPrettyFormat() ).setEncoding( encoding ) ).outputString( buildDocument( getPuzzle() ) ).getBytes();
+		return new XMLOutputter( ( isCompact() ? Format.getCompactFormat() : Format.getPrettyFormat() )
+				.setEncoding( encoding ) ).outputString( buildDocument( getPuzzle() ) ).getBytes();
 	}
 
 	private Document buildDocument( XPFPuzzleCollection puzzleCollection )
