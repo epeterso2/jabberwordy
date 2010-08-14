@@ -35,8 +35,8 @@ import java.util.Set;
  * These routines are used by the {@link PUZPuzzleInputStream} and {@link PUZPuzzleOutputStream} classes for their heavy lifting.
  * If all you need to do is to convert a PUZ file to or from a {@link PUZPuzzle} object, use those classes instead. 
  * <p>
- * This class provides stateless static methods that operate on PUZ images stored in byte[] format. The methods are stateless and nondestructive,
- * which means they are simple and accurate at the expense of efficiency.
+ * This class provides static methods that operate on PUZ images stored in byte[] format.
+ * The methods of this class are stateless and nondestructive to the image.
  * <p>
  * Two-byte numeric values stored in a PUZ image in little-endian format. All values are unsigned. Methods of this class that return unsigned byte
  * and unsigned short values do so by storing them in {@code int} objects.
@@ -44,6 +44,11 @@ import java.util.Set;
  * <p>
  * The solution and player state cells in a PUZ image are arranged as bytes in row-first order.
  * The routines of this class assume that the leftmost column index and the topmost row index are 0.
+ * <p>
+ * This class was designed for ease-of-use in understanding and accuracy in reading/writing the PUZ file format.
+ * As a result, performance was traded for readability. Since puzzle files tend to be small, this lack of
+ * efficiency is generally not noticeable when running on a desktop computer, but it may be a cause for
+ * concern when running on a cell phone or other mobile device.
  * @see <a href="http://code.google.com/p/puz/wiki/FileFormat">The PUZ File Format</a>
  * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
  */

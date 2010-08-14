@@ -88,7 +88,7 @@ public class Coordinate implements Comparable<Coordinate>, Cloneable {
 	}
 	
 	/**
-	 * Indicates whether some other object is "equal to" this one.
+	 * Indicates whether some other object is "equal to" this one. Two coordinates are equal if both their x and y values are equal.
 	 */
 	@Override
 	public boolean equals( Object object )

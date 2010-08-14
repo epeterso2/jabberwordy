@@ -1,0 +1,20 @@
+<body>
+A collection of classes for reading and writing puzzles in the Universal Crossword Puzzle Format (XPF).
+<p>
+XPF is a file format developed by Jim Horne.
+The format is based upon XML and was designed to provide maximum flexibility in representing crossword puzzles.
+<a href="http://www.xwordinfo.com/XPF/">The XPF Specification</a> is available on <a href="http://www.xwordinfo.com">XWordInfo</a>.
+<p>
+A single XPF puzzle is represented by a {@link com.epeterso2.jabberwordy.serialization.xpf.XPFPuzzle} object.
+Because an XPF file may contain multiple puzzles, the serializer and deserializer classes work with the
+{@link com.epeterso2.jabberwordy.serialization.xpf.XPFPuzzleCollection} class.  
+<p>
+<ul>
+<li>The {@link com.epeterso2.jabberwordy.serialization.xpf.XPFPuzzleOutputStream} is used to convert a byte[] representation of an XPF file
+into a {@link com.epeterso2.jabberwordy.serialization.xpf.XPFPuzzleCollection} object.</li>
+<li>The {@link com.epeterso2.jabberwordy.serialization.xpf.XPFPuzzleInputStream} is used to convert a
+{@link com.epeterso2.jabberwordy.serialization.xpf.XPFPuzzleCollection} object into a byte[] representation of an XPF file.</li>
+</ul>
+<p>
+
+</body>

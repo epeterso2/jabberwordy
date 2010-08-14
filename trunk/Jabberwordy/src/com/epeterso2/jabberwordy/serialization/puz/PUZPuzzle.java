@@ -467,7 +467,8 @@ public class PUZPuzzle implements Cloneable {
 	}
 
 	/**
-	 * Indicates whether some other object is "equal to" this one. 
+	 * Indicates whether some other object is "equal to" this one. Two puzzles are equal only if all of their properties
+	 * are equal (grid size, cell styles, clues, solution, player state, timer status, and descriptive strigs).
 	 */
 	@Override
 	public boolean equals( Object object )
