@@ -40,17 +40,17 @@ public class JSONPuzzleInputStream extends PuzzleInputStream<JSONPuzzle> {
 	}
 
 	@Override
-	public void validate() throws IOException
+	public void testForSerializability() throws IOException
 	{
-		validatePuzzle( getPuzzle() );
+		testPuzzleForSerializability( getPuzzle() );
 	}
 	
-	public static void validate( JSONPuzzle puzzle ) throws IOException
+	public static void testForSerializability( JSONPuzzle puzzle ) throws IOException
 	{
-		validatePuzzle( puzzle );
+		testPuzzleForSerializability( puzzle );
 	}
 
-	private static void validatePuzzle( JSONPuzzle puzzle )
+	private static void testPuzzleForSerializability( JSONPuzzle puzzle )
 	{
 		// TODO
 	}

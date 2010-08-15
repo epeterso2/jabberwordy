@@ -120,6 +120,6 @@ public abstract class PuzzleInputStream<P> extends InputStream {
 	 * expensive act of serialization.
 	 * @throws IOException The puzzle object cannot be serialized without error
 	 */
-	public abstract void validate() throws IOException;
+	public abstract void testForSerializability() throws IOException;
 	
 }

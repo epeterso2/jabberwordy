@@ -114,7 +114,7 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 	public byte[] toByteArray() throws IOException
 	{
 		// Make sure we're ready to serialize
-		validate();
+		testForSerializability();
 
 		// Write the output
 		return new XMLOutputter( ( isCompact() ? Format.getCompactFormat() : Format.getPrettyFormat() )
@@ -534,12 +534,13 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 	/**
 	 * Ensure that the {@link XPFPuzzleCollection} associated with this input stream can be
 	 * successfully serialized.
+	 * @throws IOException 
 	 * @throws IOException The puzzle cannot be serialized 
 	 */
 	@Override
-	public void validate() throws IOException
+	public void testForSerializability() throws IOException
 	{
-		validate( getPuzzle() );
+		testForSerializability( getPuzzle() );
 	}
 	
 	/**
@@ -547,27 +548,27 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 	 * A new {@link XPFPuzzleCollection} will be created that contains only the given puzzle.
 	 * @throws IOException The puzzle cannot be serialized 
 	 */
-	public static void validate( XPFPuzzle puzzle ) throws IOException
+	public static void testForSerializability( XPFPuzzle puzzle ) throws IOException
 	{
-		validate( new XPFPuzzleCollection( puzzle ) );
+		testForSerializability( new XPFPuzzleCollection( puzzle ) );
 	}
 
 	/**
 	 * Ensure that the given {@link XPFPuzzleCollection}can be successfully serialized.
 	 * @throws IOException The puzzle cannot be serialized 
 	 */
-	public static void validate( XPFPuzzleCollection collection ) throws IOException
+	public static void testForSerializability( XPFPuzzleCollection collection ) throws IOException
 	{
 		if ( collection != null )
 		{
 			for ( XPFPuzzle puzzle : collection )
 			{
-				validatePuzzle( puzzle );
+				testPuzzleForSerializability( puzzle );
 			}
 		}
 	}
 
-	private static void validatePuzzle( XPFPuzzle puzzle ) throws IOException
+	private static void testPuzzleForSerializability( XPFPuzzle puzzle ) throws IOException
 	{
 		confirm( puzzle != null, "Cannot serialize null puzzle" );
 		confirm( puzzle.getRows() != 0, "Puzzle has 0 rows" );
