@@ -38,7 +38,7 @@ import com.epeterso2.jabberwordy.util.CoordinateMap;
  * Serializes a {@link PUZPuzzle} object into a PUZ image as an {@link InputStream}.
  * The image created by this class is in version 1.3 of the PUZ format.
  * <p>
- * The {@link #validate()} method of this class may be used to verify that a given {@link PUZPuzzle} object
+ * The {@link #testForSerializability()} method of this class may be used to verify that a given {@link PUZPuzzle} object
  * has sufficient integrity to be serialized.
  * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
  * @see PuzzleInputStream
@@ -60,7 +60,7 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 	public byte[] toByteArray() throws IOException
 	{
 		// Ensure the puzzle is ready to be serialized
-		validate();
+		testForSerializability();
 
 		PUZPuzzle puzzle = getPuzzle();
 
@@ -506,9 +506,9 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 	 * to determine if it can be serialized successfully or not.
 	 * @throws IOException if the puzzle cannot be serialized
 	 */
-	public void validate() throws IOException
+	public void testForSerializability() throws IOException
 	{
-		validatePuzzle( getPuzzle() );
+		testPuzzleForSerializability( getPuzzle() );
 	}
 	
 	/**
@@ -516,12 +516,12 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 	 * to determine if it can be serialized successfully or not.
 	 * @throws IOException if the puzzle cannot be serialized
 	 */
-	public static void validate( PUZPuzzle puzzle ) throws IOException
+	public static void testForSerializability( PUZPuzzle puzzle ) throws IOException
 	{
-		validatePuzzle( puzzle );
+		testPuzzleForSerializability( puzzle );
 	}
 	
-	private static void validatePuzzle( PUZPuzzle puzzle ) throws IOException
+	private static void testPuzzleForSerializability( PUZPuzzle puzzle ) throws IOException
 	{
 		// Dimensions
 		confirm( puzzle.getWidth() > 0, "Width must be greater than zero" );
