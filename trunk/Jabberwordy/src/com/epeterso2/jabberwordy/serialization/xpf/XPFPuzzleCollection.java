@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public class XPFPuzzleCollection extends ArrayList<XPFPuzzle> {
 
 	/**
-	 * Create a new collection with no puzzles in it
+	 * Constructs a new puzzle collection with no puzzles in it.
 	 */
 	public XPFPuzzleCollection()
 	{
@@ -42,7 +42,7 @@ public class XPFPuzzleCollection extends ArrayList<XPFPuzzle> {
 	}
 
 	/**
-	 * Create a new collection with a specified puzzle in it
+	 * Constructs a new puzzle collection with a single puzzle in it.
 	 * @param puzzle The puzzle to add to the collection
 	 */
 	public XPFPuzzleCollection( XPFPuzzle puzzle )

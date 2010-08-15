@@ -28,8 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.epeterso2.jabberwordy.serialization.puz.PUZPuzzle;
-
 /**
  * This abstract class is the superclass of all classes that implement puzzle deserializers, which convert
  * puzzle images into puzzle objects.

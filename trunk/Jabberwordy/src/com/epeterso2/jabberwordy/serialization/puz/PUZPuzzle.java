@@ -142,8 +142,9 @@ public class PUZPuzzle implements Cloneable {
 	 * Sets the diagramless status to the given value: true if the puzzle is diagramless, false if it is normal.
 	 * @param diagramless The diagramless status
 	 */
-	public void setDiagramless(boolean diagramless) {
+	public PUZPuzzle setDiagramless(boolean diagramless) {
 		this.diagramless = diagramless;
+		return this;
 	}
 
 	/**
@@ -183,8 +184,9 @@ public class PUZPuzzle implements Cloneable {
 	 * Sets the timer running status
 	 * @param timerRunning True if the timer is running, false if the timer is stopped
 	 */
-	public void setTimerRunning(boolean timerRunning) {
+	public PUZPuzzle setTimerRunning(boolean timerRunning) {
 		this.timerRunning = timerRunning;
+		return this;
 	}
 
 	/**
@@ -199,8 +201,9 @@ public class PUZPuzzle implements Cloneable {
 	 * Sets the number of seconds that have elapsed since the timer has run since its last reset
 	 * @param elapsedSeconds The number of elapsed seconds on the timer
 	 */
-	public void setElapsedSeconds(int elapsedSeconds) {
+	public PUZPuzzle setElapsedSeconds(int elapsedSeconds) {
 		this.elapsedSeconds = elapsedSeconds;
+		return this;
 	}
 
 	/**
@@ -224,8 +227,9 @@ public class PUZPuzzle implements Cloneable {
 	 * Sets the name of the puzzle author
 	 * @param author The puzzle author
 	 */
-	public void setAuthor(String author) {
+	public PUZPuzzle setAuthor(String author) {
 		this.author = author;
+		return this;
 	}
 
 	/**
@@ -240,8 +244,9 @@ public class PUZPuzzle implements Cloneable {
 	 * Sets the copyright notice
 	 * @param copyright The copyright notice
 	 */
-	public void setCopyright(String copyright) {
+	public PUZPuzzle setCopyright(String copyright) {
 		this.copyright = copyright;
+		return this;
 	}
 
 	/**
@@ -256,8 +261,9 @@ public class PUZPuzzle implements Cloneable {
 	 * Sets the notepad contents. The notepad contains additional information about the puzzle or that is necessary to solve the puzzle.
 	 * @param notes The contents of the notepad 
 	 */
-	public void setNotes(String notes) {
+	public PUZPuzzle setNotes(String notes) {
 		this.notes = notes;
+		return this;
 	}
 
 	/**
@@ -272,16 +278,18 @@ public class PUZPuzzle implements Cloneable {
 	 * Sets the title of the puzzle
 	 * @param title The title of the puzzle
 	 */
-	public void setTitle(String title) {
+	public PUZPuzzle setTitle(String title) {
 		this.title = title;
+		return this;
 	}
 
 	/**
 	 * Sets the clue map for the across clues. The clues are keyed by cell number, not coordinate.
 	 * @param acrossClues The map of cell number into across clue string
 	 */
-	public void setAcrossClues(Map<Integer, String> acrossClues) {
+	public PUZPuzzle setAcrossClues(Map<Integer, String> acrossClues) {
 		this.acrossClues = acrossClues;
+		return this;
 	}
 
 	/**
@@ -296,8 +304,9 @@ public class PUZPuzzle implements Cloneable {
 	 * Sets the clue map for the down clues. The clues are keyed by cell number, not coordinate.
 	 * @param downClues The map of cell number into down clue string
 	 */
-	public void setDownClues(Map<Integer, String> downClues) {
+	public PUZPuzzle setDownClues(Map<Integer, String> downClues) {
 		this.downClues = downClues;
+		return this;
 	}
 
 	/**
@@ -313,8 +322,9 @@ public class PUZPuzzle implements Cloneable {
 	 * are in the range of 1 to 9.
 	 * @param unlockCode The unlock code
 	 */
-	public void setUnlockCode(String unlockCode) {
+	public PUZPuzzle setUnlockCode(String unlockCode) {
 		this.unlockCode = unlockCode;
+		return this;
 	}
 
 	/**

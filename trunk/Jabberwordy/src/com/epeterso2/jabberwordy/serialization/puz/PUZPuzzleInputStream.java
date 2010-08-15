@@ -500,16 +500,29 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 	{
 		return ( coord.getX() - 1 ) + ( coord.getY() - 1 ) * puzzle.getWidth(); 
 	}
-
+	
 	/**
-	 * Analyzes the {@link PUZPuzzle} object associated with this output stream
+	 * Analyzes the {@link PUZPuzzle} object associated with this input stream
 	 * to determine if it can be serialized successfully or not.
 	 * @throws IOException if the puzzle cannot be serialized
 	 */
 	public void validate() throws IOException
 	{
-		PUZPuzzle puzzle = getPuzzle();
-
+		validatePuzzle( getPuzzle() );
+	}
+	
+	/**
+	 * Analyzes the given {@link PUZPuzzle} object associated
+	 * to determine if it can be serialized successfully or not.
+	 * @throws IOException if the puzzle cannot be serialized
+	 */
+	public static void validate( PUZPuzzle puzzle ) throws IOException
+	{
+		validatePuzzle( puzzle );
+	}
+	
+	private static void validatePuzzle( PUZPuzzle puzzle ) throws IOException
+	{
 		// Dimensions
 		confirm( puzzle.getWidth() > 0, "Width must be greater than zero" );
 		confirm( puzzle.getHeight() > 0, "Height must be greater than zero" );
@@ -532,7 +545,7 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 		}
 	}
 
-	private void confirmClues( PUZPuzzle puzzle ) throws IOException
+	private static void confirmClues( PUZPuzzle puzzle ) throws IOException
 	{
 		ArrayList<String> clues = new ArrayList<String>();
 		PUZPuzzle test = new PUZPuzzle( puzzle.getWidth(), puzzle.getHeight() );
@@ -583,13 +596,13 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 		}
 	}
 
-	private void confirmUnlockCode( PUZPuzzle puzzle ) throws IOException
+	private static void confirmUnlockCode( PUZPuzzle puzzle ) throws IOException
 	{
 		confirm( puzzle.getUnlockCode() != null, "Unlock code cannot be null if solution is scrambled" );
 		confirm( puzzle.getUnlockCode().matches( "^[1-9]{4}$" ), "Unlock code must be a string of 4 digits in the range 1 to 9" );
 	}
 
-	private void confirmSolution( PUZPuzzle puzzle ) throws IOException
+	private static void confirmSolution( PUZPuzzle puzzle ) throws IOException
 	{
 		for ( Coordinate coord : puzzle.getCoordinates() )
 		{
@@ -600,7 +613,7 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 		}
 	}
 
-	private void confirmCellNumbering( PUZPuzzle puzzle ) throws IOException
+	private static void confirmCellNumbering( PUZPuzzle puzzle ) throws IOException
 	{
 		PUZPuzzle test = new PUZPuzzle( puzzle.getWidth(), puzzle.getHeight() );
 
@@ -618,7 +631,7 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 		}
 	}
 
-	private void confirm( boolean b, String string ) throws IOException
+	private static void confirm( boolean b, String string ) throws IOException
 	{
 		if ( ! b )
 		{

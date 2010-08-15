@@ -80,8 +80,9 @@ public class XPFSolution {
 	 * Sets the single-letter answer
 	 * @param letter The single-letter answer
 	 */
-	public void setLetter(char letter) {
+	public XPFSolution setLetter(char letter) {
 		this.letter = letter;
+		return this;
 	}
 
 	/**
@@ -96,8 +97,9 @@ public class XPFSolution {
 	 * Sets the rebus answer
 	 * @param rebus The rebus answer
 	 */
-	public void setRebus(String rebus) {
+	public XPFSolution setRebus(String rebus) {
 		this.rebus = rebus;
+		return this;
 	}
 
 	/**

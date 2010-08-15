@@ -69,9 +69,10 @@ public abstract class PuzzleInputStream<P> extends InputStream {
 	 * Sets the puzzle to be serialized
 	 * @param puzzle The puzzle to be serialized
 	 */
-	public void setPuzzle( P puzzle )
+	public PuzzleInputStream<P> setPuzzle( P puzzle )
 	{
 		this.puzzle = puzzle;
+		return this;
 	}
 	
 	/**
@@ -112,5 +113,13 @@ public abstract class PuzzleInputStream<P> extends InputStream {
 	 * @throws IOException if an error occurs during the serialization process
 	 */
 	public abstract byte[] toByteArray() throws IOException;
+	
+	/**
+	 * Determine if the puzzle associated with this input stream can be successfully serialized.
+	 * This is useful for checking the ability to serialize an object prior to the potentially
+	 * expensive act of serialization.
+	 * @throws IOException The puzzle object cannot be serialized without error
+	 */
+	public abstract void validate() throws IOException;
 	
 }
