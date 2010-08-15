@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="JDOM_LIB" sourcepath="/JDOM_SRC"/>
 	<classpathentry kind="var" path="GSON_LIB" sourcepath="/GSON_SRC"/>
+	<classpathentry kind="var" path="JXPATH_LIB" sourcepath="/JXPATH_SRC"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

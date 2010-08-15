@@ -184,5 +184,10 @@ public class XPFPuzzle {
 	{
 		return getCellStyles().keySet();
 	}
+	public String toString()
+	{
+		return new StringBuilder().append( getTitle() ).append( " by " ).append( getAuthor() )
+			.append( " [" ).append( getCols() ).append( "x" ).append( getRows() ).append( "]" ).toString();
+	}
 	
 }
