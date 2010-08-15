@@ -26,6 +26,7 @@ package com.epeterso2.jabberwordy.serialization.xpf;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
@@ -48,7 +49,7 @@ public class XPFPuzzleOutputStream extends PuzzleOutputStream<XPFPuzzleCollectio
 	{
 		try
 		{
-			return buildCollection( new XPFPuzzleCollectionContext( new SAXBuilder().build( new String( toByteArray() ) ) ) );
+			return buildCollection( new SAXBuilder().build( new String( toByteArray() ) ) );
 		}
 		
 		catch ( JDOMException e )
@@ -57,7 +58,7 @@ public class XPFPuzzleOutputStream extends PuzzleOutputStream<XPFPuzzleCollectio
 		}
 	}
 
-	private XPFPuzzleCollection buildCollection( XPFPuzzleCollectionContext context ) throws IOException
+	private XPFPuzzleCollection buildCollection( Document document ) throws IOException
 	{
 		return new XPFPuzzleCollection();
 	}
