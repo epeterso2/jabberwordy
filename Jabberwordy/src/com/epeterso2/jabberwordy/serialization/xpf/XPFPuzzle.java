@@ -83,72 +83,71 @@ public class XPFPuzzle {
 		return type;
 	}
 
-	public void setType(String type) {
+	public XPFPuzzle setType(String type) {
 		this.type = type;
+		return this;
 	}
 
 	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public XPFPuzzle setTitle(String title) {
 		this.title = title;
+		return this;
 	}
 
 	public String getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(String author) {
+	public XPFPuzzle setAuthor(String author) {
 		this.author = author;
+		return this;
 	}
 
 	public String getEditor() {
 		return editor;
 	}
 
-	public void setEditor(String editor) {
+	public XPFPuzzle setEditor(String editor) {
 		this.editor = editor;
+		return this;
 	}
 
 	public String getCopyright() {
 		return copyright;
 	}
 
-	public void setCopyright(String copyright) {
+	public XPFPuzzle setCopyright(String copyright) {
 		this.copyright = copyright;
+		return this;
 	}
 
 	public String getPublisher() {
 		return publisher;
 	}
 
-	public void setPublisher(String publisher) {
+	public XPFPuzzle setPublisher(String publisher) {
 		this.publisher = publisher;
+		return this;
 	}
 
 	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public XPFPuzzle setDate(Date date) {
 		this.date = date;
+		return this;
 	}
 
 	public int getRows() {
 		return rows;
 	}
 
-	public void setRows(int rows) {
-		this.rows = rows;
-	}
-
 	public int getCols() {
 		return cols;
-	}
-
-	public void setCols(int cols) {
-		this.cols = cols;
 	}
 
 	public CoordinateMap<XPFCellStyle> getCellStyles() {
@@ -163,16 +162,18 @@ public class XPFPuzzle {
 		return playerState;
 	}
 
-	public void setClues(List<XPFClue> clues) {
+	public XPFPuzzle setClues(List<XPFClue> clues) {
 		this.clues = clues;
+		return this;
 	}
 
 	public List<XPFClue> getClues() {
 		return clues;
 	}
 
-	public void setNotepad(String notepad) {
+	public XPFPuzzle setNotepad(String notepad) {
 		this.notepad = notepad;
+		return this;
 	}
 
 	public String getNotepad() {

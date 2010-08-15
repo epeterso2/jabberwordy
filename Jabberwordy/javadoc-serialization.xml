@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="javadoc">
-    <target name="javadoc">
-        <javadoc access="public" author="true" classpath="D:\Profiles\p64914\My Documents\Eclipse Projects\GSON\google-gson-1.4\gson-1.4.jar;D:\Profiles\p64914\My Documents\Eclipse Projects\JDOM\jdom\build\jdom.jar" destdir="javadoc" doctitle="Jabberwordy Serialization" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="H:\trunk\src\com\epeterso2\jabberwordy\serialization\package.html" packagenames="com.epeterso2.jabberwordy.serialization.json,com.epeterso2.jabberwordy.serialization.xpf,com.epeterso2.jabberwordy.serialization,com.epeterso2.jabberwordy.serialization.puz,com.epeterso2.jabberwordy.util" source="1.6" sourcepath="src" splitindex="true" use="true" version="true"/>
-    </target>
-</project>

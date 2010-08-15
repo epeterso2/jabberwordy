@@ -66,16 +66,17 @@ public class PUZExtraSection {
 	 * Sets the title of the section
 	 * @param title The section title
 	 */
-	public void setTitle(String title) {
+	public PUZExtraSection setTitle(String title) {
 		this.title = title;
+		return this;
 	}
 
 	/**
 	 * Returns the length of the data in this section
-	 * @return The length of the data
+	 * @return The length of the data, or -1 if the data is null
 	 */
 	public int getLength() {
-		return getData().length;
+		return getData() == null ? -1 : getData().length;
 	}
 
 	/**
@@ -90,8 +91,9 @@ public class PUZExtraSection {
 	 * Sets the checksum of the data region of this section
 	 * @param checksum
 	 */
-	public void setChecksum(int checksum) {
+	public PUZExtraSection setChecksum(int checksum) {
 		this.checksum = checksum;
+		return this;
 	}
 
 	/**
@@ -106,8 +108,9 @@ public class PUZExtraSection {
 	 * Sets the data of this section
 	 * @param data The data
 	 */
-	public void setData(byte[] data) {
+	public PUZExtraSection setData(byte[] data) {
 		this.data = data;
+		return this;
 	}
 	
 	/**

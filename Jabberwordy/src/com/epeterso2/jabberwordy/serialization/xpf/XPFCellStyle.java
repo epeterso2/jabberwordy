@@ -41,32 +41,36 @@ public class XPFCellStyle {
 		return circled;
 	}
 
-	public void setCircled(boolean circled) {
+	public XPFCellStyle setCircled(boolean circled) {
 		this.circled = circled;
+		return this;
 	}
 
 	public boolean isBlock() {
 		return block;
 	}
 
-	public void setBlock(boolean block) {
+	public XPFCellStyle setBlock(boolean block) {
 		this.block = block;
+		return this;
 	}
 
 	public boolean isBorderless() {
 		return borderless;
 	}
 
-	public void setBorderless(boolean borderless) {
+	public XPFCellStyle setBorderless(boolean borderless) {
 		this.borderless = borderless;
+		return this;
 	}
 
 	public String getShade() {
 		return shade;
 	}
 
-	public void setShade(String shade) {
+	public XPFCellStyle setShade(String shade) {
 		this.shade = shade;
+		return this;
 	}
 
 }

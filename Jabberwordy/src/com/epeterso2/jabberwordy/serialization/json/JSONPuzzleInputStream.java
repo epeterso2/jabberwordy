@@ -39,4 +39,20 @@ public class JSONPuzzleInputStream extends PuzzleInputStream<JSONPuzzle> {
 		return gson.toJson( getPuzzle() ).getBytes();
 	}
 
+	@Override
+	public void validate() throws IOException
+	{
+		validatePuzzle( getPuzzle() );
+	}
+	
+	public static void validate( JSONPuzzle puzzle ) throws IOException
+	{
+		validatePuzzle( puzzle );
+	}
+
+	private static void validatePuzzle( JSONPuzzle puzzle )
+	{
+		// TODO
+	}
+	
 }

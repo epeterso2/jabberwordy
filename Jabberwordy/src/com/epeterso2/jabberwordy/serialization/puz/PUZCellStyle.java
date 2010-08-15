@@ -45,8 +45,9 @@ public class PUZCellStyle implements Cloneable {
 	 * Sets the status of this cell as a block.
 	 * @param block True if this cell is a block, false if not
 	 */
-	public void setBlock(boolean block) {
+	public PUZCellStyle setBlock(boolean block) {
 		this.block = block;
+		return this;
 	}
 
 	/**
@@ -61,8 +62,9 @@ public class PUZCellStyle implements Cloneable {
 	 * Sets the previously-marked-incorrect status of this cell.
 	 * @param previouslyMarkedIncorrect True if this cell was previously marked incorrect, false if not
 	 */
-	public void setPreviouslyMarkedIncorrect(boolean previouslyMarkedIncorrect) {
+	public PUZCellStyle setPreviouslyMarkedIncorrect(boolean previouslyMarkedIncorrect) {
 		this.previouslyMarkedIncorrect = previouslyMarkedIncorrect;
+		return this;
 	}
 
 	/**
@@ -77,8 +79,9 @@ public class PUZCellStyle implements Cloneable {
 	 * Sets the currently-marked-incorrect status of this cell.
 	 * @param currentlyMarkedIncorrect True if this cell is currently marked incorrect, false if not
 	 */
-	public void setCurrentlyMarkedIncorrect(boolean currentlyMarkedIncorrect) {
+	public PUZCellStyle setCurrentlyMarkedIncorrect(boolean currentlyMarkedIncorrect) {
 		this.currentlyMarkedIncorrect = currentlyMarkedIncorrect;
+		return this;
 	}
 
 	/**
@@ -93,8 +96,9 @@ public class PUZCellStyle implements Cloneable {
 	 * Sets the revealed status of this cell.
 	 * @param revealed True if the solution of this cell was revealed, false if not
 	 */
-	public void setRevealed(boolean revealed) {
+	public PUZCellStyle setRevealed(boolean revealed) {
 		this.revealed = revealed;
+		return this;
 	}
 
 	/**
@@ -109,8 +113,9 @@ public class PUZCellStyle implements Cloneable {
 	 * Sets the circled status of this cell.
 	 * @param circled True if the cell is to be drawn with a circle inside, false if not
 	 */
-	public void setCircled(boolean circled) {
+	public PUZCellStyle setCircled(boolean circled) {
 		this.circled = circled;
+		return this;
 	}
 
 	/**
@@ -153,8 +158,9 @@ public class PUZCellStyle implements Cloneable {
 	 * Sets the clue number of this cell
 	 * @param number The clue number of this cell
 	 */
-	public void setNumber(int number) {
+	public PUZCellStyle setNumber(int number) {
 		this.number = number;
+		return this;
 	}
 
 	/**

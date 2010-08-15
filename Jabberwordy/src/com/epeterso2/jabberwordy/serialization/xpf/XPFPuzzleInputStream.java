@@ -54,33 +54,61 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 
 	private static SimpleDateFormat dateFormatter = new SimpleDateFormat( "M/d/yyyy" );
 
+	/**
+	 * Sets the compact mode for this serializer.
+	 * If set to <tt>true</tt>, the output will be optimized to minimize the size of the serialized data.
+	 * If set to <tt>false</tt> (default), the output will be formatted for human-readability. 
+	 * @param compact The compact mode setting
+	 * @return This input stream
+	 */
 	public XPFPuzzleInputStream setCompact(boolean compact) {
 		this.compact = compact;
 		return this;
 	}
 
+	/**
+	 * Returns the compact mode setting for this serializer.
+	 * If set to <tt>true</tt>, the output will be optimized to minimize the size of the serialized data.
+	 * If set to <tt>false</tt> (default), the output will be formatted for human-readability. 
+	 * @return The compact mode setting
+	 */
 	public boolean isCompact() {
 		return compact;
 	}
 
+	/**
+	 * Sets the encoding method used in the XML output. The default value is "UTF-8".
+	 * @param encoding The desired encoding method
+	 * @return This input stream
+	 */
 	public XPFPuzzleInputStream setEncoding( String encoding )
 	{
 		this.encoding = encoding;
 		return this;
 	}
 
+	/**
+	 * Constructs a new input stream for serializing an {@link XPFPuzzleCollection}.
+	 * @param collection The puzzle collection to serialize
+	 */
 	public XPFPuzzleInputStream( XPFPuzzleCollection collection )
 	{
 		super( collection );
 	}
 
+	/**
+	 * Constructs a new input stream for serializing a single puzzle.
+	 * The input stream will be initialized with a new
+	 * {@link XPFPuzzleCollection} will be created that contains only the given puzzle.
+	 * @param puzzle The puzzle to serialize
+	 */
 	public XPFPuzzleInputStream( XPFPuzzle puzzle )
 	{
 		super( new XPFPuzzleCollection( puzzle ) );
 	}
 
 	/**
-	 * Serializes the puzzle associated with this class into an XPF image.
+	 * Serializes the {@link XPFPuzzleCollection} associated with this class into an XPF image.
 	 */
 	@Override
 	public byte[] toByteArray() throws IOException
@@ -354,7 +382,9 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 
 		for ( Coordinate coord : puzzle.getCoordinates() )
 		{
-			if ( puzzle.getCellStyles().get( coord ).getShade() != null )
+			String shade = puzzle.getCellStyles().get( coord ).getShade();
+			
+			if ( shade != null && shade.length() > 0 )
 			{
 				if ( shadesElement == null )
 				{
@@ -364,7 +394,7 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 				Element shadeElement = new Element( "Shade" );
 				shadeElement.setAttribute( "Row", Integer.valueOf( coord.getY() ).toString() );
 				shadeElement.setAttribute( "Col", Integer.valueOf( coord.getX() ).toString() );
-				shadeElement.setText( puzzle.getCellStyles().get( coord ).getShade() );
+				shadeElement.setText( shade.toLowerCase() );
 
 				shadesElement.addContent( shadeElement );
 			}
@@ -501,29 +531,49 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 		}
 	}
 
+	/**
+	 * Ensure that the {@link XPFPuzzleCollection} associated with this input stream can be
+	 * successfully serialized.
+	 * @throws IOException The puzzle cannot be serialized 
+	 */
+	@Override
 	public void validate() throws IOException
 	{
 		validate( getPuzzle() );
 	}
+	
+	/**
+	 * Ensure that the given {@link XPFPuzzle} can be successfully serialized.
+	 * A new {@link XPFPuzzleCollection} will be created that contains only the given puzzle.
+	 * @throws IOException The puzzle cannot be serialized 
+	 */
+	public static void validate( XPFPuzzle puzzle ) throws IOException
+	{
+		validate( new XPFPuzzleCollection( puzzle ) );
+	}
 
+	/**
+	 * Ensure that the given {@link XPFPuzzleCollection}can be successfully serialized.
+	 * @throws IOException The puzzle cannot be serialized 
+	 */
 	public static void validate( XPFPuzzleCollection collection ) throws IOException
 	{
 		if ( collection != null )
 		{
 			for ( XPFPuzzle puzzle : collection )
 			{
-				validate( puzzle );
+				validatePuzzle( puzzle );
 			}
 		}
 	}
 
-	public static void validate( XPFPuzzle puzzle ) throws IOException
+	private static void validatePuzzle( XPFPuzzle puzzle ) throws IOException
 	{
 		confirm( puzzle != null, "Cannot serialize null puzzle" );
 		confirm( puzzle.getRows() != 0, "Puzzle has 0 rows" );
 		confirm( puzzle.getCols() != 0, "Puzzle has 0 columns" );
-		confirm( allCluesLocated( puzzle ) || allCluesNotLocated( puzzle ),
-			"Some clues are located and some clues are not located" );
+		confirm( allCluesLocated( puzzle ) || allCluesNotLocated( puzzle ), "Some clues are located and some clues are not located" );
+		confirmShadesCoorect( puzzle );
 
 		if ( allCluesNotLocated( puzzle ) )
 		{
@@ -531,40 +581,25 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 		}
 	}
 
-	public static void confirm( boolean assertion, String message ) throws IOException
+	private static void confirmShadesCoorect( XPFPuzzle puzzle ) throws IOException
+	{
+		for ( Coordinate coord : puzzle.getCoordinates() )
+		{
+			String shade = puzzle.getCellStyles().get( coord ).getShade();
+			
+			if ( shade != null && shade.length() > 0 )
+			{
+				confirm( shade.matches( "^(gray)|(#[0-9a-fA-F]{6})$"), "Invalid shade at " + coord + ": " + shade );
+			}
+		}
+	}
+
+	private static void confirm( boolean assertion, String message ) throws IOException
 	{
 		if ( ! assertion )
 		{
 			throw new IOException( message );
 		}
-	}
-
-	public static void main( String[] arg ) throws IOException
-	{
-		XPFPuzzle p1 = new XPFPuzzle( 3, 3 );
-		p1.setNotepad( "XYZZY<br />PLUGH" );
-		p1.setTitle( "A" );
-		char letter = 'A';
-		for ( Coordinate coord : p1.getCoordinates() )
-		{
-			p1.getSolutions().get( coord ).setLetter( letter );
-			letter = (char) ( ( letter == 'Z' ) ? 'A' : ( letter + 1 ));
-		}
-
-		p1.getCellStyles().get( 1, 1 ).setBlock( true );
-		p1.getCellStyles().get( 2, 2 ).setBlock( true );
-
-		List<XPFClue> clues = new ArrayList<XPFClue>();
-		XPFClue clue = new XPFClue();
-		clue.setAnswer( "XYZZY" );
-		clue.setText( "<i>A hollow voice says 'PLUGH' ...</i>" );
-		clue.setCoordinate( new Coordinate( 2, 1 ) );
-		clue.setDirection( "Diagonal" );
-		clue.setNumber( "Q" );
-		clues.add( clue );
-		p1.setClues( clues );
-
-		System.out.println( new String( new XPFPuzzleInputStream( p1 ).setCompact( false ).toByteArray() ) );
 	}
 
 }

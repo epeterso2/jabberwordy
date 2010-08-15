@@ -29,36 +29,41 @@ public class XPFClue {
 		return coordinate;
 	}
 
-	public void setCoordinate(Coordinate coordinate) {
+	public XPFClue setCoordinate(Coordinate coordinate) {
 		this.coordinate = coordinate;
+		return this;
 	}
 
 	public String getNumber() {
 		return number;
 	}
 
-	public void setNumber(String number) {
+	public XPFClue setNumber(String number) {
 		this.number = number;
+		return this;
 	}
 
 	public String getDirection() {
 		return direction;
 	}
 
-	public void setDirection(String direction) {
+	public XPFClue setDirection(String direction) {
 		this.direction = direction;
+		return this;
 	}
 
 	public String getText() {
 		return text;
 	}
 
-	public void setText(String text) {
+	public XPFClue setText(String text) {
 		this.text = text;
+		return this;
 	}
 	
-	public void setAnswer(String answer) {
+	public XPFClue setAnswer(String answer) {
 		this.answer = answer;
+		return this;
 	}
 
 	public String getAnswer() {
