@@ -95,6 +95,11 @@ public abstract class PUZEncryption {
 	
 	private static byte[] shiftString( byte[] in, int size )
 	{
+		if ( in == null || in.length <= 1 )
+		{
+			return in;
+		}
+		
 		byte[] out = new byte[ in.length ];
 		
 		for ( int i = 0; i < in.length; ++i )
@@ -119,6 +124,11 @@ public abstract class PUZEncryption {
 	
 	private static byte[] unshiftString( byte[] in, int size )
 	{
+		if ( in == null || in.length <= 1 )
+		{
+			return in;
+		}
+		
 		byte[] out = new byte[ in.length ];
 		
 		for ( int i = 0; i < in.length; ++i )

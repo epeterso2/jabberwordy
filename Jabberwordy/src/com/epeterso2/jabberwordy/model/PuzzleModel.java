@@ -1,11 +1,8 @@
 package com.epeterso2.jabberwordy.model;
 
-import java.io.File;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import com.epeterso2.jabberwordy.util.Coordinate;
 import com.epeterso2.jabberwordy.util.CoordinateMap;
@@ -31,31 +28,11 @@ public class PuzzleModel {
 	
 	private int height = 0;
 	
-	private File file = null;
+	private CoordinateMap<PuzzleModelCellStyle> cellStyles = new CoordinateMap<PuzzleModelCellStyle>();
 	
-	private long elapsedTime = 0;
-	
-	private boolean timerRunning = false;
-	
-	private Map<Integer, String> acrossClues = new TreeMap<Integer, String>();
-	
-	private Map<Integer, String> downClues = new TreeMap<Integer, String>();
-	
-	private CoordinateMap<String> solution = new CoordinateMap<String>();
-	
-	private CoordinateMap<String> answer = new CoordinateMap<String>();
-	
-	private CoordinateMap<CellAppearance> cellAppearances = new CoordinateMap<CellAppearance>();
-	
-	public CoordinateMap<CellAppearance> getCellAppearances() {
-		return cellAppearances;
-	}
+	private CoordinateMap<PuzzleModelSolution> solutions = new CoordinateMap<PuzzleModelSolution>();
 
-	public void setCellAppearances(CoordinateMap<CellAppearance> cellAppearances) {
-		this.cellAppearances = cellAppearances;
-	}
-
-	private boolean diagramless = false;
+	private CoordinateMap<PuzzleModelClue> clues = new CoordinateMap<PuzzleModelClue>();
 	
 	private Set<PuzzleModelListener> listeners = new HashSet<PuzzleModelListener>();
 	
@@ -66,9 +43,7 @@ public class PuzzleModel {
 		
 		for ( Coordinate coord : new GridCoordinateSet( width, height ) )
 		{
-			solution.put( coord, "" );
-			answer.put( coord, "" );
-			cellAppearances.put( coord, new CellAppearance() );
+			coord.getX();
 		}
 	}
 	
@@ -130,70 +105,6 @@ public class PuzzleModel {
 		this.notes = notes;
 	}
 
-	public void setFile(File file) {
-		this.file = file;
-	}
-
-	public File getFile() {
-		return file;
-	}
-
-	public void setElapsedTime(long elapsedTime) {
-		this.elapsedTime = elapsedTime;
-	}
-
-	public long getElapsedTime() {
-		return elapsedTime;
-	}
-
-	public void setAcrossClues(Map<Integer, String> acrossClues) {
-		this.acrossClues = acrossClues;
-	}
-
-	public Map<Integer, String> getAcrossClues() {
-		return acrossClues;
-	}
-
-	public void setDownClues(Map<Integer, String> downClues) {
-		this.downClues = downClues;
-	}
-
-	public Map<Integer, String> getDownClues() {
-		return downClues;
-	}
-
-	public void setSolution(CoordinateMap<String> solution) {
-		this.solution = solution;
-	}
-
-	public CoordinateMap<String> getSolution() {
-		return solution;
-	}
-
-	public void setAnswer(CoordinateMap<String> answer) {
-		this.answer = answer;
-	}
-
-	public CoordinateMap<String> getAnswer() {
-		return answer;
-	}
-
-	public void setTimerRunning(boolean timerRunning) {
-		this.timerRunning = timerRunning;
-	}
-
-	public boolean isTimerRunning() {
-		return timerRunning;
-	}
-
-	public void setDiagramless(boolean diagramless) {
-		this.diagramless = diagramless;
-	}
-
-	public boolean isDiagramless() {
-		return diagramless;
-	}
-
 	public String getEditor() {
 		return editor;
 	}
@@ -216,6 +127,30 @@ public class PuzzleModel {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public void setCellStyles(CoordinateMap<PuzzleModelCellStyle> cellStyles) {
+		this.cellStyles = cellStyles;
+	}
+
+	public CoordinateMap<PuzzleModelCellStyle> getCellStyles() {
+		return cellStyles;
+	}
+
+	public void setSolutions(CoordinateMap<PuzzleModelSolution> solutions) {
+		this.solutions = solutions;
+	}
+
+	public CoordinateMap<PuzzleModelSolution> getSolutions() {
+		return solutions;
+	}
+
+	public void setClues(CoordinateMap<PuzzleModelClue> clues) {
+		this.clues = clues;
+	}
+
+	public CoordinateMap<PuzzleModelClue> getClues() {
+		return clues;
 	}
 
 }

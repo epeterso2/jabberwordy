@@ -1,24 +1,16 @@
 package com.epeterso2.jabberwordy.ui;
 
-import javax.swing.WindowConstants;
-import javax.swing.SwingUtilities;
-
-import com.epeterso2.jabberwordy.model.PuzzleModel;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.zip.DataFormatException;
 
-import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+
+import com.epeterso2.jabberwordy.model.PuzzleModel;
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo
@@ -177,14 +169,10 @@ public class PuzzleSolvingWindow extends javax.swing.JFrame {
 		JOptionPane.showMessageDialog( PuzzleSolvingWindow.this, model.getNotes(), "Notepad", JOptionPane.INFORMATION_MESSAGE );
 	}
 
-	private DateFormat format = new SimpleDateFormat( "HH:MM:SS" );
-
 	private void propertiesMenuItemActionPerformed(ActionEvent evt)
 	{
 		StringBuilder builder = new StringBuilder();
 
-		builder.append( model.getFile() );
-		builder.append( "\n" );
 		builder.append( model.getTitle() );
 		builder.append( "\nBy " );
 		builder.append( model.getAuthor() );
@@ -194,9 +182,6 @@ public class PuzzleSolvingWindow extends javax.swing.JFrame {
 		builder.append( model.getHeight() );
 		builder.append( ", Width: " );
 		builder.append( model.getWidth() );
-		builder.append( "\nElapsed Time: " );
-		builder.append( model.getElapsedTime() / 1000 );
-		builder.append( " seconds" );
 
 		JOptionPane.showMessageDialog( PuzzleSolvingWindow.this, builder.toString(), "Properties", JOptionPane.INFORMATION_MESSAGE );
 	}
@@ -205,7 +190,6 @@ public class PuzzleSolvingWindow extends javax.swing.JFrame {
 	public void dispose()
 	{
 		super.dispose();
-		PuzzleWindowManager.deregisterPuzzleSolvingWindow( this );
 	}
 
 	private void closeMenuItemActionPerformed(ActionEvent evt) {
