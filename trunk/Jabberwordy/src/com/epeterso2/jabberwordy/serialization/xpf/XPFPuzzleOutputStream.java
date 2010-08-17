@@ -154,7 +154,24 @@ public class XPFPuzzleOutputStream extends PuzzleOutputStream<XPFPuzzleCollectio
 
 	private void buildGrid( XPFPuzzle puzzle, Element puzzleElement )
 	{
-		;
+		if ( puzzleElement.getChild( "Grid" ) != null )
+		{
+			int row = 0;
+			
+			for ( Object rowObject : puzzleElement.getChild( "Grid" ).getChildren( "Row" ) )
+			{
+				if ( rowObject instanceof Element )
+				{
+					row++;
+					Element rowElement = (Element) rowObject;
+					
+					for ( int col = 0; col < rowElement.getText().length(); ++col )
+					{
+						puzzle.getSolutions().get( col + 1, row ).setLetter( rowElement.getText().charAt( col ) );
+					}
+				}
+			}
+		}
 	}
 
 	private void buildClues( XPFPuzzle puzzle, Element puzzleElement )

@@ -1,8 +1,6 @@
 package com.epeterso2.jabberwordy.ui;
-import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
-import javax.swing.JRadioButton;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
@@ -19,6 +17,7 @@ import javax.swing.WindowConstants;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+@SuppressWarnings("serial")
 public class PuzzlePrintDialog extends javax.swing.JDialog {
 
 	/**

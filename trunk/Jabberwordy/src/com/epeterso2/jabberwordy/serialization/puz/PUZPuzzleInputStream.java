@@ -51,6 +51,11 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 	 */
 	private static String VERSION_STRING = "1.3\0";
 
+	public PUZPuzzleInputStream( PUZPuzzle puzzle )
+	{
+		super( puzzle );
+	}
+
 	/**
 	 * Serializes a {@link PUZPuzzle} object into a PUZ file image. PUZ file image extra sections will be created only if necessary.
 	 * If the unlockCode property of the puzzle object is non-null, then the puzzle solution will be scrambled using the unlock code. 

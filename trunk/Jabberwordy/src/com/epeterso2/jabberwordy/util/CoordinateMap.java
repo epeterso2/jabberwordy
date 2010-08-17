@@ -23,7 +23,6 @@
 
 package com.epeterso2.jabberwordy.util;
 
-import java.util.Map;
 import java.util.TreeMap;
 
 /**
