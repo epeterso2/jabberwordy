@@ -204,18 +204,6 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 		return cluesElement;
 	}
 
-	private static XPFCellStyle blockCellStyle = new XPFCellStyle();
-
-	static
-	{
-		blockCellStyle.setBlock( true );
-	}
-
-	private static XPFCellStyle getStyle( XPFPuzzle puzzle, int x, int y )
-	{
-		return puzzle.getCellStyles().containsKey( x, y ) ? puzzle.getCellStyles().get( x, y ) : blockCellStyle;
-	}
-
 	private static boolean allCluesLocated( XPFPuzzle puzzle )
 	{
 		for ( XPFClue clue : puzzle.getClues() )
@@ -438,7 +426,7 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 			
 			if ( shade != null && shade.length() > 0 )
 			{
-				confirm( shade.matches( "^(gray)|(#[0-9a-fA-F]{6})$"), "Invalid shade at " + coord + ": " + shade );
+				confirm( shade.matches( "^(gray)|(\\#[0-9a-fA-F]{6})$"), "Invalid shade at " + coord + ": " + shade );
 			}
 		}
 	}
