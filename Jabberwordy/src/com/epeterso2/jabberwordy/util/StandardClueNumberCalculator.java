@@ -27,18 +27,26 @@ import java.util.EnumMap;
 
 /**
  * Builds a numbered crossword grid based upon conventional grid-numbering rules.
+ * <p>
+ * A cell will be assigned a number only if it can be the start of either an across or down clue.
+ * A cell can be the start of an across clue if the cell to the left is a block and the cell to the right is not a block.
+ * A cell can be the start of a down clue if the cell above it is a block and the cell below it is not a block.
+ * (Virtual cells outside the borders of the grid are considered blocks.)
+ * <p>
+ * Numbers are assigned in left-to-right, top-to-bottom order, starting with the number 1. Entries in the map will also have
+ * properties set that indicate if they can be the start of an across clue or a down clue (or both).
  * @author <a href="http://www.epeterso2.com">Eric Peterson</a> 
  */
 public class StandardClueNumberCalculator {
-	
+
 	private enum Direction {
 		UP, DOWN, LEFT, RIGHT;
 	}
-	
+
 	private int rows = 0;
-	
+
 	private int cols = 0;
-	
+
 	private CoordinateMap<Boolean> blocks = new CoordinateMap<Boolean>();
 
 	/**
@@ -57,34 +65,26 @@ public class StandardClueNumberCalculator {
 
 	/**
 	 * Builds a numbered grid according to conventional crossword puzzle rules using the given grid size and block (black square) pattern.
-	 * <p>
-	 * A cell will be assigned a number only if it can be the start of either an across or down clue.
-	 * A cell can be the start of an across clue if the cell to the left is a block and the cell to the right is not a block.
-	 * A cell can be the start of a down clue if the cell above it is a block and the cell below it is not a block.
-	 * (Virtual cells outside the borders of the grid are considered blocks.)
-	 * <p>
-	 * Numbers are assigned in left-to-right, top-to-bottom order, starting with the number 1. Entries in the map will also have
-	 * properties set that indicate if they can be the start of an across clue or a down clue (or both).
 	 * @return A {@link CoordinateMap} of {@link StandardClueNumberResult} objects which contains the calculated numbering for the grid given
 	 * in the constructor.
 	 */
 	public CoordinateMap<StandardClueNumberResult> getNumberedGrid()
 	{
 		CoordinateMap<StandardClueNumberResult> grid = new CoordinateMap<StandardClueNumberResult>();
-		
+
 		int clueNumber = 0;
-		
+
 		for ( int row = 1; row <= rows; ++row )
 		{
 			for ( int col = 1; col <= cols; ++col )
 			{
 				StandardClueNumberResult clueNumberResult = new StandardClueNumberResult();
 				grid.put( col, row, clueNumberResult );
-				
+
 				boolean isBlock = blocks.containsKey( col, row ) && blocks.get( col, row );
 				boolean isStartOfAcrossEntry = isStartOfAcrossEntry( col, row );
 				boolean isStartOfDownEntry = isStartOfDownEntry( col, row );
-				
+
 				if ( ! isBlock && ( isStartOfAcrossEntry || isStartOfDownEntry ) )
 				{
 					clueNumberResult.setNumber( ++clueNumber );
@@ -93,7 +93,7 @@ public class StandardClueNumberCalculator {
 				}
 			}
 		}
-		
+
 		return grid;
 	}
 
@@ -110,17 +110,17 @@ public class StandardClueNumberCalculator {
 
 		return isAdjacentCellABlock.get( Direction.UP ) && ! isAdjacentCellABlock.get( Direction.DOWN ) ? true : false;
 	}
-	
+
 	private EnumMap<Direction, Boolean> getAdjacentBlockMap( int col, int row )
 	{
 		EnumMap<Direction, Boolean> map = new EnumMap<Direction, Boolean>( Direction.class );
-		
+
 		map.put( Direction.UP,    row == 1    || blocks.containsKey( col, row - 1 ) && blocks.get( col, row - 1 ) );
 		map.put( Direction.DOWN,  row == rows || blocks.containsKey( col, row + 1 ) && blocks.get( col, row + 1 ) );
 		map.put( Direction.LEFT,  col == 1    || blocks.containsKey( col - 1, row ) && blocks.get( col - 1, row ) );
 		map.put( Direction.RIGHT, col == cols || blocks.containsKey( col + 1, row ) && blocks.get( col + 1, row ) );
-		
+
 		return map;
 	}
-	
+
 }

@@ -29,7 +29,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -37,6 +39,10 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 import com.epeterso2.jabberwordy.serialization.PuzzleOutputStream;
+import com.epeterso2.jabberwordy.util.Coordinate;
+import com.epeterso2.jabberwordy.util.CoordinateMap;
+import com.epeterso2.jabberwordy.util.StandardClueNumberCalculator;
+import com.epeterso2.jabberwordy.util.StandardClueNumberResult;
 
 /**
  * Provides an {@link OutputStream} for deserializing an XPF image into an {@link XPFPuzzleCollection} object.
@@ -174,9 +180,116 @@ public class XPFPuzzleOutputStream extends PuzzleOutputStream<XPFPuzzleCollectio
 		}
 	}
 
-	private void buildClues( XPFPuzzle puzzle, Element puzzleElement )
+	private void buildClues( XPFPuzzle puzzle, Element puzzleElement ) throws IOException
 	{
-		;
+		if ( puzzleElement.getChild( "Clues" ) != null )
+		{
+			List<XPFClue> clueList = buildClueList( puzzleElement );
+			
+			if ( ! areAllCluesLocated( clueList ) && ! areAllCluesNotLocated( clueList ) )
+			{
+				throw new IOException( "Some clues are located and some are not" );
+			}
+			
+			puzzle.getClues().addAll( areAllCluesLocated( clueList ) ? clueList : buildLocatedClueList( puzzle, clueList ) );
+		}
+	}
+	
+	private List<XPFClue> buildLocatedClueList( XPFPuzzle puzzle, List<XPFClue> clueList )
+	{
+		CoordinateMap<Boolean> blocks = new CoordinateMap<Boolean>();
+		
+		for ( Coordinate coord : puzzle.getCoordinates() )
+		{
+			if ( puzzle.getCellStyles().get( coord ).isBlock() )
+			{
+				blocks.put( coord, true );
+			}
+		}
+		
+		CoordinateMap<StandardClueNumberResult> results = new StandardClueNumberCalculator( puzzle.getCols(), puzzle.getRows(), blocks ).getNumberedGrid();
+		int clueIndex = 0;
+		
+		for ( Coordinate coord : puzzle.getCoordinates() )
+		{
+			if ( results.containsKey( coord ) && ( results.get( coord ).isStartOfAcrossClue() || results.get( coord ).isStartOfDownClue() ) )
+			{
+				if ( results.get( coord ).isStartOfAcrossClue() )
+				{
+					XPFClue clue = clueList.get( clueIndex++ );
+					clue.setCoordinate( coord );
+					clue.setNumber( Integer.valueOf( results.get( coord ).getNumber() ).toString() );
+					clue.setDirection( "Across" );
+				}
+
+				if ( results.get( coord ).isStartOfDownClue() )
+				{
+					XPFClue clue = clueList.get( clueIndex++ );
+					clue.setCoordinate( coord );
+					clue.setNumber( Integer.valueOf( results.get( coord ).getNumber() ).toString() );
+					clue.setDirection( "Down" );
+				}
+			}
+		}
+
+		return clueList;
+	}
+
+	private boolean areAllCluesNotLocated( List<XPFClue> clues )
+	{
+		for ( XPFClue clue : clues )
+		{
+			if ( clue.isLocated() )
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
+	private boolean areAllCluesLocated( List<XPFClue> clues )
+	{
+		for ( XPFClue clue : clues )
+		{
+			if ( ! clue.isLocated() )
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
+	private List<XPFClue> buildClueList( Element puzzleElement )
+	{
+		List<XPFClue> clueList = new ArrayList<XPFClue>();
+		
+		for ( Object clueObject : puzzleElement.getChild( "Clues" ).getChildren( "Clue" ) )
+		{
+			if ( clueObject instanceof Element )
+			{
+				Element clueElement = (Element) clueObject;
+				XPFClue clue = new XPFClue();
+
+				clue.setAnswer( clueElement.getAttributeValue( "Ans" ) );
+				clue.setNumber( clueElement.getAttributeValue( "Num" ) );
+				clue.setDirection( clueElement.getAttributeValue( "Dir" ) );
+				clue.setText( clueElement.getText() );
+				
+				String col = clueElement.getAttributeValue( "Col" ); 
+				String row = clueElement.getAttributeValue( "Row" ); 
+				
+				if ( col != null && row != null )
+				{
+					clue.setCoordinate( new Coordinate( Integer.valueOf( col ), Integer.valueOf( row ) ) );
+				}
+				
+				clueList.add( clue );
+			}
+		}
+		
+		return clueList;
 	}
 
 	private Date buildDate( Element puzzleElement ) throws IOException

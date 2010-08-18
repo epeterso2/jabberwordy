@@ -94,6 +94,13 @@ public class StandardClueNumberResult {
 		return isStartOfAcrossClue() || isStartOfDownClue();
 	}
 	
+	/**
+	 * Returns a string representation of the result in the following format:
+	 * <p>
+	 * <tt>number:AD</tt>
+	 * <p>
+	 * Where A or D is set if the cell is the start of an across or down, respectively, or "-" if not.
+	 */
 	public String toString()
 	{
 		return new StringBuilder().append( number ).append( ":" ).append( startOfAcrossClue ? "A" : "-" ).append( startOfDownClue ? "D" : "-" ).toString();

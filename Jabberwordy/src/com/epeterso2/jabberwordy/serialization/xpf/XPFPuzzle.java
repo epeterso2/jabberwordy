@@ -149,7 +149,7 @@ public class XPFPuzzle {
 	/**
 	 * Sets the name of the editor of the puzzle
 	 * @param editor The editor of the puzzle
-	 * @return
+	 * @return This object
 	 */
 	public XPFPuzzle setEditor(String editor) {
 		this.editor = editor;
@@ -244,7 +244,7 @@ public class XPFPuzzle {
 
 	/**
 	 * Returns the mapping of {@link Coordinate} objects into the player state (answers entered by the solver)
-	 * @return
+	 * @return The coordinate mapping of the player state
 	 */
 	public CoordinateMap<String> getPlayerState() {
 		return playerState;
@@ -305,6 +305,9 @@ public class XPFPuzzle {
 			.append( " [" ).append( getCols() ).append( "x" ).append( getRows() ).append( "]" ).toString();
 	}
 	
+	/**
+	 * Returns a hash code value for the object.
+	 */
 	@Override
 	public int hashCode()
 	{
@@ -332,7 +335,10 @@ public class XPFPuzzle {
 	{
 		return object == null ? 1 : object.hashCode();
 	}
-	
+
+	/**
+	 * Indicates whether some other object is "equal to" this one.
+	 */
 	@Override
 	public boolean equals( Object object )
 	{
@@ -349,7 +355,17 @@ public class XPFPuzzle {
 				equal( this.getAuthor(), that.getAuthor() ) &&
 				equal( this.getCellStyles(), that.getCellStyles() ) &&
 				equal( this.getClues(), that.getClues() ) &&
-				equal( this.getCols(), that.getCols() );
+				equal( this.getCols(), that.getCols() ) &&
+				equal( this.getCopyright(), that.getCopyright() ) &&
+				equal( this.getDate(), that.getDate() ) &&
+				equal( this.getEditor(), that.getEditor() ) &&
+				equal( this.getNotepad(), that.getNotepad() ) &&
+				equal( this.getPlayerState(), that.getPlayerState() ) &&
+				equal( this.getPublisher(), that.getPublisher() ) &&
+				equal( this.getRows(), that.getRows() ) &&
+				equal( this.getSolutions(), that.getSolutions() ) &&
+				equal( this.getTitle(), that.getTitle() ) &&
+				equal( this.getType(), that.getType() );
 		}
 		
 	}
