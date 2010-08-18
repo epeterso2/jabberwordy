@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.epeterso2.jabberwordy.util.StandardClueNumberCalculator;
+import com.epeterso2.jabberwordy.util.StandardClueNumberResult;
 import com.epeterso2.jabberwordy.util.Coordinate;
 import com.epeterso2.jabberwordy.util.CoordinateMap;
 import com.epeterso2.jabberwordy.util.GridCoordinateSet;
@@ -428,23 +430,32 @@ public class PUZPuzzle implements Cloneable {
 	 */
 	public void assignClues( List<String> clues )
 	{
-		for ( Coordinate coord : getCoordinates() )
+		CoordinateMap<StandardClueNumberResult> result = new StandardClueNumberCalculator( width, height, buildBlockMap() ).getNumberedGrid();
+		
+		for ( Coordinate coord : result.keySet() )
 		{
-			PUZCellStyle style = getCellStyles().get( coord );
-			
-			if ( ! style.isBlock() && style.getNumber() > 0 )
+			if ( result.get( coord ).isStartOfAcrossClue() )
 			{
-				if ( ! getStyle( coord.getX() + 1, coord.getY() ).isBlock() && getStyle( coord.getX() - 1, coord.getY() ).isBlock() )
-				{
-					getAcrossClues().put( style.getNumber(), clues.remove( 0 ) );
-				}
+				getAcrossClues().put( result.get( coord ).getNumber(), clues.remove( 0 ) );
+			}
 
-				if ( ! getStyle( coord.getX(), coord.getY() + 1 ).isBlock() && getStyle( coord.getX(), coord.getY() - 1 ).isBlock() )
-				{
-					getDownClues().put( style.getNumber(), clues.remove( 0 ) );
-				}
+			if ( result.get( coord ).isStartOfDownClue() )
+			{
+				getDownClues().put( result.get( coord ).getNumber(), clues.remove( 0 ) );
 			}
 		}
+	}
+
+	private CoordinateMap<Boolean> buildBlockMap()
+	{
+		CoordinateMap<Boolean> map = new CoordinateMap<Boolean>();
+		
+		for ( Coordinate coord : getCoordinates() )
+		{
+			map.put( coord, getCellStyles().get( coord ).isBlock() );
+		}
+		
+		return map;
 	}
 
 	/**

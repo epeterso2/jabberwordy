@@ -118,5 +118,11 @@ public class XPFClue {
 	{
 		return coordinate != null && number != null && direction != null;
 	}
+	
+	public String toString()
+	{
+		return new StringBuilder().append( coordinate.toString() ).append( "=" ).append( number ).append( "-" ).append( direction )
+		.append( ": " ).append( text ).append( " [" ).append( answer ).append( "]").toString();
+	}
 
 }

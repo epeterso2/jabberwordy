@@ -36,6 +36,11 @@ public class JSONPuzzleInputStream extends PuzzleInputStream<JSONPuzzle> {
 	@Override
 	public byte[] toByteArray() throws IOException
 	{
+		if ( getPuzzle() == null )
+		{
+			throw new IOException( new NullPointerException( "Null puzzle" ) );
+		}
+		
 		return gson.toJson( getPuzzle() ).getBytes();
 	}
 

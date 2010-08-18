@@ -68,7 +68,7 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 		testForSerializability();
 
 		PUZPuzzle puzzle = getPuzzle();
-
+		
 		/**
 		 * Constructs a new PUZ deserializing output stream using an input stream.
 		 * The entire input stream will be read then written to this output stream.
@@ -528,6 +528,8 @@ public class PUZPuzzleInputStream extends PuzzleInputStream<PUZPuzzle> {
 	
 	private static void testPuzzleForSerializability( PUZPuzzle puzzle ) throws IOException
 	{
+		confirm( puzzle != null, "No puzzle defined" );
+		
 		// Dimensions
 		confirm( puzzle.getWidth() > 0, "Width must be greater than zero" );
 		confirm( puzzle.getHeight() > 0, "Height must be greater than zero" );
