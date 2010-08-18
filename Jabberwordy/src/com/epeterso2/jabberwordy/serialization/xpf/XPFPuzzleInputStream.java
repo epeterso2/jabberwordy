@@ -26,8 +26,6 @@ package com.epeterso2.jabberwordy.serialization.xpf;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.jdom.CDATA;
 import org.jdom.Content;
@@ -113,6 +111,11 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 	@Override
 	public byte[] toByteArray() throws IOException
 	{
+		if ( getPuzzle() == null )
+		{
+			throw new IOException( new NullPointerException( "Null puzzle" ) );
+		}
+		
 		// Make sure we're ready to serialize
 		testForSerializability();
 
@@ -173,39 +176,13 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 		return element;
 	}
 
-	private List<XPFClue> buildLocatedClueList( XPFPuzzle puzzle )
-	{
-		if ( allCluesLocated( puzzle ) )
-		{
-			return puzzle.getClues();
-		}
-
-		else
-		{
-			List<XPFClue> clues = locateClues( puzzle );
-
-			for ( int i = 0; i < clues.size(); ++i )
-			{
-				XPFClue loc = clues.get( i );
-				XPFClue puz = puzzle.getClues().get( i );
-
-				loc.setAnswer( puz.getAnswer() );
-				loc.setText( puz.getText() );
-			}
-
-			return clues;
-		}
-	}
-
 	private Element buildCluesElement( XPFPuzzle puzzle )
 	{
 		Element cluesElement = null;
 
 		if ( puzzle.getClues() != null )
 		{
-			List<XPFClue> clues = buildLocatedClueList( puzzle );
-
-			for ( XPFClue clue : clues )
+			for ( XPFClue clue : puzzle.getClues() )
 			{
 				if ( cluesElement == null )
 				{
@@ -239,135 +216,11 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 		return puzzle.getCellStyles().containsKey( x, y ) ? puzzle.getCellStyles().get( x, y ) : blockCellStyle;
 	}
 
-	private static boolean isAcrossEntry( XPFPuzzle puzzle, Coordinate coord )
-	{
-		boolean acrossEntry = false;
-
-		// If the cell is not a block, see if it needs to be numbered
-		if ( ! puzzle.getCellStyles().get( coord ).isBlock() )
-		{
-			// Grab the other cells in the vicinity, including virtual ones that might be off the grid
-			XPFCellStyle styleUp = getStyle( puzzle, coord.getX(), coord.getY() - 1 );
-			XPFCellStyle styleDown  = getStyle( puzzle, coord.getX(), coord.getY() + 1 );
-			XPFCellStyle styleLeft = getStyle( puzzle, coord.getX() - 1, coord.getY() );
-			XPFCellStyle styleRight = getStyle( puzzle, coord.getX() + 1, coord.getY() );
-
-			// Compute the number of enterable directions
-			int playDirs = 0;
-			playDirs += styleUp.isBlock()    ? 0 : 1;
-			playDirs += styleDown.isBlock()  ? 0 : 1;
-			playDirs += styleLeft.isBlock()  ? 0 : 1;
-			playDirs += styleRight.isBlock() ? 0 : 1;
-
-			// Can this be the start of an across entry?
-			if ( styleLeft.isBlock() && ! styleRight.isBlock() && ( ! styleUp.isBlock() || ! styleDown.isBlock() ) )
-			{
-				acrossEntry = true;
-			}
-
-			// Can this be the unchecked start of an across entry?
-			if ( playDirs == 1 && ! styleRight.isBlock() )
-			{
-				acrossEntry = true;
-			}
-		}
-
-		return acrossEntry;
-	}
-
-	private static boolean isDownEntry( XPFPuzzle puzzle, Coordinate coord )
-	{
-		boolean downEntry = false;
-
-		// If the cell is not a block, see if it needs to be numbered
-		if ( ! puzzle.getCellStyles().get( coord ).isBlock() )
-		{
-			// Grab the other cells in the vicinity, including virtual ones that might be off the grid
-			XPFCellStyle styleUp = getStyle( puzzle, coord.getX(), coord.getY() - 1 );
-			XPFCellStyle styleDown  = getStyle( puzzle, coord.getX(), coord.getY() + 1 );
-			XPFCellStyle styleLeft = getStyle( puzzle, coord.getX() - 1, coord.getY() );
-			XPFCellStyle styleRight = getStyle( puzzle, coord.getX() + 1, coord.getY() );
-
-			// Compute the number of enterable directions
-			int playDirs = 0;
-			playDirs += styleUp.isBlock()    ? 0 : 1;
-			playDirs += styleDown.isBlock()  ? 0 : 1;
-			playDirs += styleLeft.isBlock()  ? 0 : 1;
-			playDirs += styleRight.isBlock() ? 0 : 1;
-
-			// Can this be the start of a down entry?
-			if ( styleUp.isBlock() && ! styleDown.isBlock() && ( ! styleLeft.isBlock() || ! styleRight.isBlock() ) )
-			{
-				downEntry = true;
-			}
-
-			// Can this be the unchecked start of a down entry?
-			if ( playDirs == 1 && ! styleDown.isBlock() )
-			{
-				downEntry = true;
-			}
-		}
-
-		return downEntry;
-	}
-
-	private static List<XPFClue> locateClues( XPFPuzzle puzzle )
-	{
-		List<XPFClue> locatedClues = new ArrayList<XPFClue>();
-		int clueNumber = 0;
-
-		for ( Coordinate coord : puzzle.getCoordinates() )
-		{
-			boolean acrossEntry = isAcrossEntry( puzzle, coord );
-			boolean downEntry = isDownEntry( puzzle, coord );
-
-			if ( acrossEntry || downEntry )
-			{
-				clueNumber++;
-
-				if ( acrossEntry )
-				{
-					XPFClue clue = new XPFClue();
-					clue.setCoordinate( coord );
-					clue.setNumber( Integer.valueOf( clueNumber ).toString() );
-					clue.setDirection( "Across" );
-
-					locatedClues.add( clue );
-				}
-
-				if ( downEntry )
-				{
-					XPFClue clue = new XPFClue();
-					clue.setCoordinate( coord );
-					clue.setNumber( Integer.valueOf( clueNumber ).toString() );
-					clue.setDirection( "Down" );
-
-					locatedClues.add( clue );
-				}
-			}
-		}
-
-		return locatedClues;
-	}
-
 	private static boolean allCluesLocated( XPFPuzzle puzzle )
 	{
 		for ( XPFClue clue : puzzle.getClues() )
 		{
 			if ( ! clue.isLocated() )
-			{
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	private static boolean allCluesNotLocated( XPFPuzzle puzzle )
-	{
-		for ( XPFClue clue : puzzle.getClues() )
-		{
-			if ( clue.isLocated() )
 			{
 				return false;
 			}
@@ -573,13 +426,8 @@ public class XPFPuzzleInputStream extends PuzzleInputStream<XPFPuzzleCollection>
 		confirm( puzzle != null, "Cannot serialize null puzzle" );
 		confirm( puzzle.getRows() != 0, "Puzzle has 0 rows" );
 		confirm( puzzle.getCols() != 0, "Puzzle has 0 columns" );
-		confirm( allCluesLocated( puzzle ) || allCluesNotLocated( puzzle ), "Some clues are located and some clues are not located" );
+		confirm( allCluesLocated( puzzle ), "All clues must be located" );
 		confirmShadesCoorect( puzzle );
-
-		if ( allCluesNotLocated( puzzle ) )
-		{
-			confirm( locateClues( puzzle ).size() == puzzle.getClues().size(), "Number of clue locations does not match number of clued entries in the puzzle" );
-		}
 	}
 
 	private static void confirmShadesCoorect( XPFPuzzle puzzle ) throws IOException

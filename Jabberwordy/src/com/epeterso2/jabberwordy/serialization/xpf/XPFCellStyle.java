@@ -72,5 +72,11 @@ public class XPFCellStyle {
 		this.shade = shade;
 		return this;
 	}
+	
+	public String toString()
+	{
+		return new StringBuilder().append( block ? "B" : "-" ).append( circled ? "O" : "-" ).append( borderless ? "N" : "-" )
+		.append( shade != null ? "" : ( "[" + shade + "]" ) ).toString();
+	}
 
 }
