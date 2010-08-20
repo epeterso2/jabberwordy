@@ -23,24 +23,48 @@
 
 package com.epeterso2.jabberwordy.serialization.json;
 
+/**
+ * Contains a pair of string arrays in an {@link JSONPuzzle}, one for across data and one for down data.
+ * The properties of this class are named in such a way as to support
+ * easy serialization into JSON format.
+ * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
+ * @see <a href="http://www.xwordinfo.com/JSON">Crossword puzzle data in JSON format</a>
+ * @see <a href="http://www.json.org">Introducing JSON</a>
+ */
 public class AcrossAndDownStrings {
 	
 	private String[] across = null;
 	
 	private String[] down = null;
 
+	/**
+	 * Sets the across string array to the given value
+	 * @param across The across string array value
+	 */
 	public void setAcross(String[] across) {
 		this.across = across;
 	}
 
+	/**
+	 * Returns the value of the across string array
+	 * @return The value of the across string array
+	 */
 	public String[] getAcross() {
 		return across;
 	}
 
+	/**
+	 * Sets the down string array to the given value
+	 * @param down The down string array value
+	 */
 	public void setDown(String[] down) {
 		this.down = down;
 	}
 
+	/**
+	 * Returns the value of the down string array
+	 * @return The value of the down string array
+	 */
 	public String[] getDown() {
 		return down;
 	}

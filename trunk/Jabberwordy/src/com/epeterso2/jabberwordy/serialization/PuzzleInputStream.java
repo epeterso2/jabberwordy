@@ -115,7 +115,7 @@ public abstract class PuzzleInputStream<P> extends InputStream {
 	public abstract byte[] toByteArray() throws IOException;
 	
 	/**
-	 * Determine if the puzzle associated with this input stream can be successfully serialized.
+	 * Determines if the puzzle associated with this input stream can be successfully serialized.
 	 * This is useful for checking the ability to serialize an object prior to the potentially
 	 * expensive act of serialization.
 	 * @throws IOException The puzzle object cannot be serialized without error

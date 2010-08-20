@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.epeterso2.jabberwordy.serialization.Puzzle;
 import com.epeterso2.jabberwordy.util.StandardClueNumberCalculator;
 import com.epeterso2.jabberwordy.util.StandardClueNumberResult;
 import com.epeterso2.jabberwordy.util.Coordinate;
@@ -52,7 +53,7 @@ import com.epeterso2.jabberwordy.util.GridCoordinateSet;
  * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
  * @see <a href="http://code.google.com/p/puz/wiki/FileFormat">The PUZ Project</a>
  */
-public class PUZPuzzle implements Cloneable {
+public class PUZPuzzle implements Puzzle, Cloneable {
 	
 	private int width = 0;
 	

@@ -152,5 +152,10 @@ public class PuzzleModel {
 	public CoordinateMap<PuzzleModelClue> getClues() {
 		return clues;
 	}
+	
+	public String toString()
+	{
+		return new StringBuilder().append( getTitle() ).append( " by " ).append( getAuthor() ).toString();
+	}
 
 }

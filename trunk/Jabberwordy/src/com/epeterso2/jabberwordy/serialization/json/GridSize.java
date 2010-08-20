@@ -23,24 +23,47 @@
 
 package com.epeterso2.jabberwordy.serialization.json;
 
+/**
+ * Contains the size of a {@link JSONPuzzle} grid in rows and columns. The properties of this class are named in such a way as to support
+ * easy serialization into JSON format.
+ * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
+ * @see <a href="http://www.xwordinfo.com/JSON">Crossword puzzle data in JSON format</a>
+ * @see <a href="http://www.json.org">Introducing JSON</a>
+ */
 public class GridSize {
 	
 	private int rows = 0;
 	
 	private int cols = 0;
 
+	/**
+	 * Returns the number of rows in the grid
+	 * @return The number of rows in the grid
+	 */
 	public int getRows() {
 		return rows;
 	}
 
+	/**
+	 * Sets the number of rows in the gird
+	 * @param rows The number of rows in the grid
+	 */
 	public void setRows(int rows) {
 		this.rows = rows;
 	}
 
+	/**
+	 * Returns the number of columns in the grid
+	 * @return The number of columns in the grid
+	 */
 	public int getCols() {
 		return cols;
 	}
 
+	/**
+	 * Sets the number of columns in the grid
+	 * @param cols The number of columns in the grid
+	 */
 	public void setCols(int cols) {
 		this.cols = cols;
 	}

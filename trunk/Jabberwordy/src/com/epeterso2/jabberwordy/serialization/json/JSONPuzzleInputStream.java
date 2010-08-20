@@ -29,6 +29,12 @@ import com.epeterso2.jabberwordy.serialization.PuzzleInputStream;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+/**
+ * Serializes a {@link JSONPuzzle} object into the JSON file format.
+ * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
+ * @see <a href="http://www.xwordinfo.com/JSON">Crossword puzzle data in JSON format</a>
+ * @see <a href="http://www.json.org">Introducing JSON</a>
+ */
 public class JSONPuzzleInputStream extends PuzzleInputStream<JSONPuzzle> {
 	
 	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -44,12 +50,20 @@ public class JSONPuzzleInputStream extends PuzzleInputStream<JSONPuzzle> {
 		return gson.toJson( getPuzzle() ).getBytes();
 	}
 
+	/**
+	 * Determines if the {@link JSONPuzzle} associated with this input stream can be successfully serialized.
+	 * @throws IOException The puzzle cannot be serialized
+	 */
 	@Override
 	public void testForSerializability() throws IOException
 	{
 		testPuzzleForSerializability( getPuzzle() );
 	}
 	
+	/**
+	 * Determines if the given {@link JSONPuzzle} can be successfully serialized.
+	 * @throws IOException The puzzle cannot be serialized
+	 */
 	public static void testForSerializability( JSONPuzzle puzzle ) throws IOException
 	{
 		testPuzzleForSerializability( puzzle );
@@ -57,7 +71,7 @@ public class JSONPuzzleInputStream extends PuzzleInputStream<JSONPuzzle> {
 
 	private static void testPuzzleForSerializability( JSONPuzzle puzzle )
 	{
-		// TODO
+		;
 	}
 	
 }
