@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.epeterso2.jabberwordy.serialization.Puzzle;
 import com.epeterso2.jabberwordy.util.Coordinate;
 import com.epeterso2.jabberwordy.util.CoordinateMap;
 import com.epeterso2.jabberwordy.util.GridCoordinateSet;
@@ -36,7 +37,7 @@ import com.epeterso2.jabberwordy.util.GridCoordinateSet;
  * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
  * @see <a href="http://www.xwordinfo.com/XPF/">XWordInfo XPF Universal Crossword Puzzle Format</a>
  */
-public class XPFPuzzle {
+public class XPFPuzzle implements Puzzle {
 	
 	private String type = null;
 	

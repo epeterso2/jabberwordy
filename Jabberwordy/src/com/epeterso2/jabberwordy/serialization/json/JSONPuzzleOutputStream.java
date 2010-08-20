@@ -28,10 +28,19 @@ import java.io.IOException;
 import com.epeterso2.jabberwordy.serialization.PuzzleOutputStream;
 import com.google.gson.Gson;
 
+/**
+ * Provides a {@link PuzzleOutputStream} for deserializing a JSON image into a {@link JSONPuzzle} object.
+ * @author <a href="http://www.epeterso2.com">Eric Peterson</a>
+ * @see <a href="http://www.xwordinfo.com/JSON">Crossword puzzle data in JSON format</a>
+ * @see <a href="http://www.json.org">Introducing JSON</a>
+ */
 public class JSONPuzzleOutputStream extends PuzzleOutputStream<JSONPuzzle> {
 	
 	private Gson gson = new Gson();
 
+	/**
+	 * Converts the serialized puzzle image into a {@link JSONPuzzle} object.
+	 */
 	@Override
 	public JSONPuzzle toPuzzle() throws IOException
 	{
